@@ -3,7 +3,9 @@ README.md
 VIRGIN-1.md
 BACKEND-CONTRACT.md
 supabase/
-scripts/
+scripts/*
+!scripts/build-runtime.cjs
+!scripts/runtime-files.json
 .DS_Store
 assets/*.png
 assets/close-up.jpg
