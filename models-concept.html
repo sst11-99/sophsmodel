@@ -157,7 +157,11 @@ header{position:relative;z-index:1}
 @media(hover:none){.model:hover .wall-sheet,.model:hover .roster-portrait{translate:none}.model:hover .card-sheen{opacity:.85}}
 @media(pointer:coarse){.tabs button,.roster-links a,.book-now,.close{min-height:48px}.close{min-width:48px}}
 @media(max-height:420px){.model-dialog.gallery-view{grid-template-rows:auto minmax(90px,1fr) auto auto;gap:6px}.model-dialog .booking-action{min-height:48px;padding:0}}
+.model-dialog.gallery-view .photos.live-final-gallery{overflow-y:auto;grid-template-rows:none;grid-auto-rows:clamp(230px,38vh,380px);align-content:start;overscroll-behavior:contain}
+.model-dialog.gallery-view .photos.live-final-gallery figure{grid-template-rows:minmax(0,1fr) auto;gap:6px}
+.live-final-gallery figure>a:first-child{min-height:0;display:block}.live-final-gallery figure>a:last-child{font:12px sans-serif;color:#666;text-align:center;padding:5px}.gallery-message{grid-column:1/-1}
 </style>
+<script defer src="website-gallery.js"></script>
 </head>
 <body>
 <header><span class="brand">SM-26</span><nav class="tabs" aria-label="Models and application"><span class="thumb" aria-hidden="true"></span><button aria-pressed="true" data-division="female" aria-controls="roster">Female</button><button aria-pressed="false" data-division="male" aria-controls="roster">Male</button><button aria-pressed="false" data-division="apply">Apply</button></nav><nav class="roster-links" aria-label="Account and navigation"><a class="model-login-link" href="model-login.html" target="_parent">Login</a></nav></header>
@@ -373,6 +377,7 @@ function openProfile(name,index,division,source){
   else{const pending=document.createElement('div');pending.className='photo-pending official-pending';pending.textContent='Photos coming soon';figure.append(pending);}
   return figure;
  }));
+ const finalGallery=window.sophsFinalGallery||window.SophieWebsiteGallery;if(finalGallery)finalGallery.mount(name==='Sophie Trau'?document.querySelector('.photos'):null);
  document.querySelector('.book-now').hidden=false;
  dialog.showModal();
  unfoldProfile(source);
@@ -423,7 +428,7 @@ function finish(event,cancelled=false){
 }
 tabs.addEventListener('pointerup',event=>finish(event));tabs.addEventListener('pointercancel',event=>finish(event,true));
 dialog.addEventListener('cancel',event=>{event.preventDefault();closeProfile();});
-dialog.addEventListener('close',()=>{profileClosing=false;clearProfileMotion();profileSource?.focus({preventScroll:true});});
+dialog.addEventListener('close',()=>{(window.sophsFinalGallery||window.SophieWebsiteGallery)?.mount(null);profileClosing=false;clearProfileMotion();profileSource?.focus({preventScroll:true});});
 document.querySelector('.close').addEventListener('click',closeProfile);
 const bookingContact=document.querySelector('.booking-contact');
 document.querySelector('.book-now').addEventListener('click',()=>bookingContact.showModal());

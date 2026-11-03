@@ -450,3 +450,75 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,dialog::-webkit-scrollbar,#label
   84%{transform:translateY(0) scale(1,1);border-radius:50%}
 }
 @media(prefers-reduced-motion:reduce){.brand-logo{animation:none;transform:none;border-radius:50%}}
+
+/* Simplified review preserves the underlying metadata. */
+.photo-filters[hidden], .photo .tags, .photo .suggested,
+.review-finish, .review-follow {display:none!important}
+.sync-conflict{padding:12px;border:1px solid #a44;border-radius:8px}.sync-conflict button{min-height:44px;margin:4px}
+#sync-panel{text-align:center;color:#706a64;font-size:12px;padding:2px 12px}#sync-status{margin:4px auto}#order-instruction{text-align:center;color:#706a64;font-size:13px;margin:8px auto 16px}#sync-panel:has(#sync-status:empty){display:none}
+
+.photo[data-decision="reject"] .image-button{filter:grayscale(1);opacity:.38}.local-clips{display:flex;overflow-x:auto;gap:16px;padding:20px;scroll-snap-type:x proximity}.local-clips figure{flex:0 0 min(78vw,320px);margin:0;scroll-snap-align:start}.local-clips video{width:100%;aspect-ratio:1;object-fit:contain;background:#eee}.local-clips figcaption{font-size:12px;padding:8px 0}
+
+.comparison-disputed .image-button{filter:grayscale(1);opacity:.38}.comparison-question{font-weight:600;color:#555}
+
+/* Two-choice review; old metadata controls remain internal only. */
+.view-tabs,.bulk,.review-guide [data-intro-copy],#collaboration-help,.intro-language,.agency-intro,.review-intro{display:none!important}
+.review-votes,.comparison-question{text-align:center}
+.photo:has(.review-votes) .actions,.photo.comparison-disputed .actions{display:none}
+#collaboration-summary:empty,#save-status:empty{display:none}
+
+.photo .reorder{display:none!important}
+/* Tap or drag with a weighted glide; keep the DOM through the settling frame. */
+.actions.choice-slider{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:4px;background:#eeeded;border-radius:999px;touch-action:pan-y;user-select:none;-webkit-user-select:none;max-width:280px;margin:10px auto 0;width:100%;min-height:52px;cursor:grab}
+.choice-slider .choice-thumb{position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/2);border-radius:999px;background:linear-gradient(150deg,#363636,#1c1c1c);box-shadow:inset 0 1px 1px #ffffff30,0 2px 5px #0002;transform:translateX(calc(var(--choice-slide,0)*100%));transition:transform 320ms cubic-bezier(.22,.7,.2,1),opacity 200ms ease;pointer-events:none}
+.choice-slider[data-has-choice=false] .choice-thumb{opacity:0}
+.choice-slider .choice-label{display:grid;place-items:center;min-height:44px;padding:9px 5px;color:#686868;font-size:13px;line-height:1.2;pointer-events:none}.choice-slider .choice-label[data-visual-selected=true]{color:#fff}.choice-slider.sliding{cursor:grabbing}.choice-slider.sliding .choice-thumb{transition:none}.choice-slider[aria-busy=true]{cursor:progress}.choice-slider[aria-disabled=true]{opacity:.5;cursor:default}.choice-slider:focus-visible{outline:2px solid #777;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.choice-slider .choice-thumb{transition:none}}
+
+.shared-reorder{display:flex;justify-content:center;gap:6px;margin-top:0}.shared-reorder button{min-width:44px;min-height:44px}.reorder-photo{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:grab}.reorder-photo.dragging{outline:2px solid #555;cursor:grabbing}#order-status:empty{display:none}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+/* Reorder without visible arrows. Labelled alternatives appear on keyboard focus. */
+.photo .reorder{display:none!important}
+.shared-reorder .keyboard-reorder:not(:focus){position:absolute;width:1px;height:1px;min-width:0;min-height:0;padding:0;border:0;overflow:hidden;clip-path:inset(50%)}
+.shared-reorder .keyboard-reorder:focus{position:static;width:auto;height:auto;clip-path:none}
+
+.photo .image-button{transition:filter 320ms ease,opacity 320ms ease}
+.choice-slider .choice-label{transition:color 220ms ease}
+@media(prefers-reduced-motion:reduce){.photo .image-button,.choice-slider .choice-label{transition:none}}
+
+.reorder-photo{position:relative}.reorder-photo.dragging{opacity:.85;box-shadow:0 12px 28px #0003}
+
+/* Shared attribution sits in its own quiet, vertically centred line. */
+.photo .review-votes{display:flex;align-items:center;justify-content:center;gap:12px;min-height:38px;margin:10px auto 4px;padding:3px 0;font-size:12px;font-weight:500;line-height:1;letter-spacing:.025em;color:#555}
+.vote-label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.vote-star{font-size:10px;line-height:1;transform:translateY(-.5px)}.vote-divider{color:#aaa;font-size:12px;line-height:1}
+.photo[data-order-id]{position:relative}.photo[data-order-id]>.image-button:not(.dragging){transition:translate 160ms ease-out}
+.photo[data-drop-edge]::before{content:'';position:absolute;z-index:2;background:#444;border-radius:2px;pointer-events:none}
+.photo[data-drop-axis=x][data-drop-edge=before]::before{left:-9px;top:8px;bottom:54px;width:2px}.photo[data-drop-axis=x][data-drop-edge=after]::before{right:-9px;top:8px;bottom:54px;width:2px}
+.photo[data-drop-axis=y][data-drop-edge=before]::before{top:-9px;left:8px;right:8px;height:2px}.photo[data-drop-axis=y][data-drop-edge=after]::before{bottom:0;left:8px;right:8px;height:2px}
+.photo[data-drop-axis=x][data-drop-edge=before]>.image-button{translate:14px 0}.photo[data-drop-axis=x][data-drop-edge=after]>.image-button{translate:-14px 0}
+.photo[data-drop-axis=y][data-drop-edge=before]>.image-button{translate:0 14px}.photo[data-drop-axis=y][data-drop-edge=after]>.image-button{translate:0 -14px}
+@media(prefers-reduced-motion:reduce){.photo[data-order-id]>.image-button:not(.dragging){transition:none}}
+
+/* Local prototype: free two-dimensional lift, flow and landing. */
+.drag-ghost{z-index:1000;pointer-events:none;border:0;padding:0;border-radius:14px;overflow:hidden;background:#eceae6;box-shadow:0 20px 48px #0004;transform-origin:50% 50%;will-change:transform,opacity;transition:opacity 100ms linear}
+.drag-ghost img{width:100%;height:100%;object-fit:contain;border-radius:inherit;display:block}.drag-ghost::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,#fff0 25%,#fff2 49%,#0001 51%,#fff0 78%);pointer-events:none}
+.photo.drag-flow{transition:none;will-change:auto}.photo.drag-origin>.image-button{opacity:var(--landing-opacity,.2);outline:1px solid #8884}.photo.drag-flow>.image-button{translate:none!important}.photo.drag-origin .review-votes{opacity:.35}.photo.drag-flow::before{display:block}
+@media(prefers-reduced-motion:reduce){.drag-ghost,.photo.drag-flow{transition:none}.drag-ghost::after{display:none}}
+
+/* Acknowledgement stays in the existing status line; no overlay or layout shift. */
+#sync-status{min-height:20px;font-family:inherit;font-size:13px;line-height:20px}
+#sync-status[data-order-saved=true]{color:#52745b;animation:order-saved-fade 1.4s ease both}
+@keyframes order-saved-fade{0%{opacity:0}15%,75%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){#sync-status[data-order-saved=true]{animation:none}}
+
+.final-reject{align-self:center;border:0;background:none;color:#746b67;font:inherit;font-size:13px;padding:12px 18px;min-height:44px;cursor:pointer}
+.final-reject:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+
+.final-candidate .choice-slider{display:none}
+
+/* Full list geometry, with only the nearby photos and controls mounted. */
+.viewport-shell{display:flex;flex-direction:column}.viewport-controls-space{height:62px;flex:none}.final-candidate .viewport-controls-space{height:48px}.viewport-shell>.image-button{flex:none}
+
+.final-reject{width:clamp(64px,32%,88px);max-width:100%;min-height:44px;margin-top:4px;padding:10px 12px;font-size:13px;line-height:18px;align-self:center}
+/* Intrinsic image dimensions must not change the reserved slot height. */
+.viewport-shell>.image-button{contain:size;min-height:0}

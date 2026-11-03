@@ -41,6 +41,29 @@
           "value": "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://zyzwvrogeudwvackduau.supabase.co; connect-src 'self' https://zyzwvrogeudwvackduau.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
         }
       ]
+    },
+    {
+      "source": "/swipe/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://zyzwvrogeudwvackduau.supabase.co; connect-src 'self' https://zyzwvrogeudwvackduau.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+        }
+      ]
     }
-  ]
+  ],
+  "buildCommand": "node scripts/build-runtime.cjs",
+  "outputDirectory": "public"
 }

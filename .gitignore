@@ -11,3 +11,7 @@ assets/*.png
 # Local portal preview only.
 model-portal-preview-local.*
 assets/sophs-portal-logo.png
+
+# Generated allowlisted website output.
+/public/
+/.runtime-build-*/

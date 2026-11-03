@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Sophie · Photo review</title><link rel="stylesheet" href="demo.css"><script src="../supabase-config.js"></script><script src="../model-auth.js"></script><script type="module" src="app.mjs"></script></head>
+<body><main>
+<header><h1>Sophie <span>· Photo review</span></h1><nav aria-label="Review version"><button id="agency" disabled aria-pressed="true">Agency</button><button id="model" disabled aria-pressed="false">Your Version</button><button id="final" disabled aria-pressed="false">Final comp cards</button></nav></header>
+<p id="progress" aria-live="polite">Loading photos…</p>
+<section id="stage" aria-label="Photo review" tabindex="0" aria-keyshortcuts="ArrowLeft ArrowRight z"><div id="card"><img id="photo" alt="" draggable="false"><span id="cue" aria-hidden="true"></span></div><div id="missing" hidden>Photo unavailable <button id="retry-photo">Retry photo</button></div></section>
+<section id="results" hidden aria-label="Kept photos"><h2 id="result-title"></h2><div id="grid"></div><button id="more" hidden>More photos</button><button id="review">Return to review</button></section>
+<section id="final-panel" hidden aria-label="Final selection"></section>
+<div id="controls"><button id="reject" disabled aria-label="Reject photo" title="Reject · left arrow">Reject</button><button id="undo" disabled aria-label="Undo last decision" title="Undo · Z">Undo</button><button id="keep" disabled aria-label="Keep photo" title="Keep · right arrow">Keep</button></div>
+<footer><p id="status" role="status">Not saved yet</p><button id="retry" hidden>Retry save</button><div><button id="scope" disabled>Use all photos</button><button id="export" disabled>Export</button></div></footer>
+</main></body></html>

@@ -12,8 +12,9 @@ const clothingNames = {'casual':'Casual','streetwear':'Streetwear','runway-wear'
 let photoOwner = 'Model';
 let photos = [], selections = {}, suggestions = {}, links = [], editing = null, busy = false, adding = false;
 const pending = new Set(), selected = new Set(), categoryFilters = new Set();
-let bulkBusy = false, jumpFrame;
-window.reviewHasPending=()=>pending.size>0||bulkBusy||busy||adding||!!$('labels').open;
+let bulkBusy = false, jumpFrame, choiceMotions=0;
+const choiceMotionCounts=new Map();
+window.reviewHasPending=()=>window.reviewDragActive||pending.size>0||bulkBusy||busy||adding||!!$('labels').open;
 const shotPresets = {'CU-01':{frame:'close-up',angle:'front'},'ML-01':{frame:'mid-length',angle:'front'},'PF-01':{frame:'close-up',angle:'side'},'FL-01':{frame:'full-length',angle:'front'},'JN-01':{frame:'full-length',angle:'front',clothing:'jeans'}};
 function shotLabel(s) {
   if(s.frame==='full-length'&&s.angle==='front'&&s.clothing==='jeans')return 'JN-01 · Full-length · Jeans';
@@ -44,21 +45,26 @@ function matches(p) {
 }
 let saveFeedbackTimer;
 function saveStatus(text, state) {
+  if(window.reviewSaveFeedback){window.reviewSaveFeedback(text,state);return;}
   clearTimeout(saveFeedbackTimer);
   const status=$('save-status');
   status.textContent=text;status.dataset.state=state;
   status.className=state==='error'?'error':'';
   if(state==='saved')saveFeedbackTimer=setTimeout(()=>{status.textContent='';delete status.dataset.state;},5000);
 }
+async function animateChoice(p,s,value,card){
+  choiceMotions++;choiceMotionCounts.set(p.filename,(choiceMotionCounts.get(p.filename)||0)+1);pending.add(p.filename);card.dataset.decision=value;
+  const settle=new Promise(resolve=>setTimeout(resolve,window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?0:340));
+  const saving=save(p,{...s,decision:value});
+  void Promise.all([saving,settle]).finally(()=>{const remaining=choiceMotionCounts.get(p.filename)-1;if(remaining)choiceMotionCounts.set(p.filename,remaining);else{choiceMotionCounts.delete(p.filename);pending.delete(p.filename);}choiceMotions--;if(!choiceMotions)render();});
+  return saving; // Accept a deliberate reversal as soon as the durable queue accepts this choice.
+}
 async function save(p,s) {
-  if(pending.has(p.filename)) return false;
-  pending.add(p.filename); saveStatus('Saving…','saving'); render();
   try {
     const r=await reviewFetch('/api/selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:p.filename,selection:s})});
-    if(!r.ok) throw Error();
-    selections[p.filename]=s; saveStatus(pending.size>1?'Saving…':'Your version saved.',pending.size>1?'saving':'saved'); return true;
-  } catch { saveStatus('Could not save. Your last saved choice is unchanged. Please try again.','error'); return false; }
-  finally {pending.delete(p.filename);render();}
+    const data=await r.json();if(!r.ok)throw Error(data.error||'Could not retain your choice.');
+    selections[p.filename]=data.selection;saveStatus(data.queued?'Choice retained on this device; awaiting server.':'Example choice saved in this browser.',data.queued?'pending':'saved');render();return true;
+  }catch(error){saveStatus(error.message,'error');return false;}
 }
 function openLabels(p) {
   for(const detail of $('labels').querySelectorAll('details'))detail.open=false;
@@ -69,39 +75,45 @@ function openLabels(p) {
   $('suggestion-detail').textContent=suggestion?'Suggested: '+labelled(suggestion).join(' / ')+(suggestion.reason?' · Check: '+suggestion.reason:''):'Not visually classified yet. You can add labels yourself.';
   syncLabelSelects(); $('apply-suggestions').hidden=!suggestion; $('label-save-status').textContent=''; $('labels').showModal();
 }
+let reviewViewport=null;
+window.reviewDragSettled=()=>{if(window.reviewDragNeedsRender)render();};
 function render() {
+  if(window.reviewDragActive){window.reviewDragNeedsRender=true;return;}
+  if(choiceMotions)return;
+  window.reviewDragNeedsRender=false;
   syncViewTabs();
   syncFilterSliders();
-  const shown=photos.filter(matches), counts={}; for(const p of photos){const d=choice(p).decision;counts[d]=(counts[d]||0)+1;}
-  $('summary').textContent=shown.length+' matching · '+photos.length+' total · '+(counts.keep||0)+' kept · '+(counts.favourite||0)+' favourites · '+(counts.reject||0)+' rejected · '+(counts.unreviewed||0)+' not reviewed';
-  const grid=$('grid'); grid.replaceChildren();
+  const shown=window.reviewOrdered(photos);
+  $('summary').textContent=shown.length+' photos';
+  const started=performance.now(),grid=$('grid'),orderFocus=window.reviewOrderFocus?.capture(grid),choiceFocus=window.reviewChoiceFocus?.capture(grid),compare=window.reviewIsCompare?.();grid.replaceChildren();const viewportItems=[];
   for(const p of window.reviewOrdered(shown)) {
-    const s=choice(p), n=photos.indexOf(p)+1, card=element('article',undefined,'photo'); card.dataset.decision=s.decision;
+    const s=choice(p), n=photos.indexOf(p)+1, card=element('article',undefined,'photo'); card.dataset.decision=s.decision;card.dataset.photoId=p.filename;
+    card.classList.add('viewport-shell');card.classList.toggle('final-candidate',!!compare);card.setAttribute('aria-label','Photo '+n);if(compare)card.dataset.orderId=p.filename;
+    const placeholder=()=>{card.replaceChildren();const blank=element('div',undefined,'image-button');blank.setAttribute('aria-hidden','true');const space=element('div',undefined,'viewport-controls-space');card.append(blank,space);};
+    placeholder();
+    const mount=()=>{card.replaceChildren();
     const imageButton=element('button',undefined,'image-button'); imageButton.setAttribute('aria-label','Open full photo '+n);
     const img=element('img');img.alt=photoOwner+' photo '+n;img.loading='lazy';img.decoding='async';
     const imageUrl=p.image||'';
     let retries=0;
     img.onerror=()=>{if(retries++<1)setTimeout(()=>{if(img.isConnected)img.src=imageUrl;},250);};
     img.src=imageUrl;imageButton.append(img);
-    imageButton.onclick=()=>{$('full-photo').src=img.src;$('full-caption').textContent='Photo '+n+' · '+p.filename;$('viewer').showModal();};
-    card.append(imageButton,element('h3','Photo '+n+' · '+(p.date||'Date unknown')),element('p',s.decision==='unreviewed'?'Not reviewed':s.decision.charAt(0).toUpperCase()+s.decision.slice(1)));
-    const tags=element('div',labelled(s).join(' / '),'tags');card.append(tags);
-    const suggestion=suggestions[p.filename];
-    if(suggestion&&!s.labelsReviewed) card.append(element('p','Suggested: '+labelled(suggestion).join(' / '),'suggested'));
-    if(suggestion&&suggestion.needsReview) card.append(element('p','Check: '+suggestion.reason,'suggested'));
-    const actions=element('div',undefined,'actions');
-    for(const [value,name] of [['keep','Keep'],['favourite','Favourite'],['reject','Reject']]) {
-      const b=element('button',name); b.setAttribute('aria-label',name+' photo '+n);b.setAttribute('aria-pressed',String(s.decision===value));b.disabled=bulkBusy||pending.has(p.filename);
-      b.onclick=()=>save(p,{...s,decision:s.decision===value?'unreviewed':value});actions.append(b);
-    }
-    const labels=element('button','Labels');labels.setAttribute('aria-label','Labels for photo '+n);labels.onclick=()=>openLabels(p);labels.disabled=bulkBusy||pending.has(p.filename);actions.append(labels);card.append(actions);
-    if(p.source){const source=element('a','Facebook source','source');source.href=p.source;source.target='_blank';source.rel='noopener noreferrer';card.append(source);}
-    else card.append(element('p',p.original_name||'Uploaded original','source'));
-    window.reviewDecorate(card,p,s,save);
-    grid.append(card);
+    imageButton.onclick=()=>{$('full-photo').src=img.src;$('original-download').textContent=p.original?'Download original':'Open / download photo';$('original-download').href=p.original||p.image;$('original-download').download=p.original_name||p.filename;$('full-caption').textContent='';$('viewer').showModal();};
+    card.append(imageButton);
+    if(!compare){const actions=window.createReviewChoiceToggle({value:s.decision,label:'Choice for photo '+n,disabled:bulkBusy||pending.has(p.filename),onCommit:value=>animateChoice(p,s,value,card)});
+    card.append(actions);}
+    window.reviewDecorate(card,p,s,save);};
+    viewportItems.push({id:p.filename,card,mount,unmount:placeholder});grid.append(card);
   }
   updateBulk();
   window.reviewAfterRender();
+  window.reviewSkipOrderAnimation=false;
+  reviewViewport ||= new window.ReviewViewport({grid});
+  const noWindowing=!!window.sophsLocalFixture&&new URLSearchParams(location.search).get('viewport')==='0';
+  reviewViewport.set(viewportItems,{focusId:orderFocus?.id||choiceFocus?.id,disabled:noWindowing});
+  window.reviewRenderDuration=performance.now()-started;
+  window.reviewOrderFocus?.restore(grid,orderFocus);
+  window.reviewChoiceFocus?.restore(grid,choiceFocus);
 }
 for(const [group,names] of [['types',typeNames],['uses',useNames]]) for(const [value,name] of Object.entries(names)) {
   const label=element('label',undefined,'check'), box=element('input');box.type='checkbox';box.value=value;box.name=group;label.append(box,document.createTextNode(name));(group==='types'&&!primaryTypes.includes(value)?$('extra-types'):$(group)).append(label);
@@ -137,7 +149,16 @@ $('label-form').onsubmit=async e=>{
   const s={...choice(editing),frame:$('frame').value,angle:$('angle').value,makeup:$('makeup').value,footwear:$('footwear').value,clothing:$('clothing').value,types:[...$('types').querySelectorAll('input:checked')].map(x=>x.value),uses:[...$('uses').querySelectorAll('input:checked')].map(x=>x.value),smile:$('smile').checked,notes:$('notes').value,labelsReviewed:true};
   const ok=await save(editing,s);busy=false;$('save-labels').disabled=false;if(ok)$('labels').close();else $('label-save-status').textContent='Could not save. Please try again.';
 };
-reviewFetch('/api/photos').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{photoOwner=data.profile?.name||'Model';document.querySelector('.page-title h1').textContent=data.profile?.title||'Your photos';document.title=(data.profile?.title||'Your photos')+' · SOPHS';if(data.profile?.initial_view)$('decision').value=data.profile.initial_view;photos=data.photos;selections=data.selections;suggestions=data.suggestions||{};links=data.links||[];renderLinks();render();window.reviewActivate(async()=>{selected.clear();const r=await reviewFetch('/api/photos');if(!r.ok)throw Error('Reload to refresh your collection.');const d=await r.json();photos=d.photos;selections=d.selections;suggestions=d.suggestions||{};links=d.links||[];renderLinks();render();});}).catch(()=>{$('summary').textContent='Your collection could not load. Return to Model Login or contact SOPHS.';});
+let loadGeneration=0;
+async function loadReview(){
+ const generation=++loadGeneration;
+ try{
+  const r=await reviewFetch('/api/photos');if(!r.ok)throw Error('Collection unavailable. Retry when connected.');const data=await r.json();if(generation!==loadGeneration)return;
+  photoOwner=data.profile?.name||'Model';document.querySelector('.page-title h1').textContent=data.profile?.title||'Your photos';document.title=(data.profile?.title||'Your photos')+' · SOPHS';
+  $('decision').value='all';selected.clear();photos=data.photos;selections=data.selections;suggestions=data.suggestions||{};links=data.links||[];renderLinks();render();
+ }catch(error){if(generation===loadGeneration)$('summary').textContent=error.message;}
+}
+window.reviewActivate(loadReview);void loadReview();
 
 for(const value of primaryTypes){const option=element('option',typeNames[value]);option.value=value;$('bulk-category').append(option);}
 for(const id of ['bulk-category','bulk-shot'])$(id).onchange=updateBulk;
@@ -273,8 +294,8 @@ const introCopy = {
     lineEnd: ' updates: applications, dates & travel times.',
     promise: 'Find and arrange your own jobs? Keep 100%.',
     reviewTitle: 'Your comp-card photos',
-    reviewHelp: 'Upload in bulk. Keep or reject each photo.',
-    reviewSave: 'Check AI labels. Choose your favourites.',
+    reviewHelp: 'Your choices stay separate from the agency’s.',
+    reviewSave: 'Favourite, reject or leave undecided. Each choice saves separately.',
     finishTitle: 'Your photos. Your choice.',
     finishHelp: 'Keep or reject every photo before applying your changes.',
     applyChanges: 'Apply changes',
