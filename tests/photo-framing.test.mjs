@@ -1,0 +1,50 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+import {photoPaths,buildMessages} from '../supabase/functions/application-line-alert/format.mjs';
+const read=p=>readFile(new URL('../'+p,import.meta.url),'utf8');
+test('models route embeds the paper-card roster and preserves same-page navigation',async()=>{
+ assert.match(await read('index.html'),/class="roster-frame" src="models-concept.html\?embedded=1(?:&[^"]*)"/);
+ const roster=await read('models-concept.html');
+ const cards=[...roster.matchAll(/file:'(wall-cards\/[^']+)'/g)].map(match=>match[1]);
+ assert.equal(cards.length,3);
+ for(const file of cards) assert.ok((await readFile(new URL('../assets/'+file,import.meta.url))).length>0);
+ assert.doesNotMatch(roster,/Ploy Showman|data-division="ai"/);
+ assert.match(roster,/window.parent.modelingNavigate\(link.dataset.rosterNav\)/);
+});
+test('thirteen uploads save a complete manifest; a fourteenth is refused before network calls',async()=>{
+ const calls=[];
+ const context={window:{modelingSupabaseConfig:{url:'https://example.com',bucket:'private',publishableKey:'test'}},fetch:async(url,options)=>{calls.push({url,options});return {ok:true};}};
+ vm.runInNewContext(await read('backend.js'),context);
+ const photos=['face','midLength','profile','fullLength','jeans'].map(slot=>({slot,index:0,file:{name:'photo.jpg',type:'image/jpeg',size:1}}));
+ for(const slot of ['otherOne','otherTwo'])for(let index=0;index<4;index++)photos.push({slot,index,file:{name:'photo.jpg',type:'image/jpeg',size:1}});
+ const payload={id:'test',confirmed_accurate_and_adult:true,application_data_use_consent:true};
+ await context.window.modelingBackend.submitApplication(payload,photos);
+ assert.equal(calls.length,14);
+ assert.equal(JSON.parse(calls.at(-1).options.body).photo_manifest.length,13);
+ calls.length=0;
+ await assert.rejects(context.window.modelingBackend.submitApplication(payload,[...photos,photos[0]]),/13/);
+ assert.equal(calls.length,0);
+});
+test('mid-length guide and close-up remain distinct single-photo slots',async()=>{
+ const html=await read('index.html');
+ assert.equal((html.match(/type="file"/g)||[]).length,7);
+ assert.match(html,/assets\/waist-up-v2.jpg/);
+ assert.match(html,/name="midLength" type="file" accept=/);
+ assert.match(html,/<b>FL-01<\/b><span>Front · Full-length<\/span>/);
+ assert.match(await read('styles.css'),/\.upload-object > img \{[^}]*object-fit: contain/);
+ const context={window:{}};vm.runInNewContext(await read('backend.js'),context);
+ assert.equal(context.window.modelingBackend.buildStoragePath('test','midLength','photo.jpg'),'test/mid-length.jpg');
+ assert.throws(()=>context.window.modelingBackend.buildStoragePath('test','midLength','photo.jpg',1));
+});
+test('all thirteen photographs fit into two LINE galleries with no losses',()=>{
+ const id='11111111-1111-4111-8111-111111111111';
+ const paths=['face','mid-length','profile','full-length','jeans',...['other-one','other-two'].flatMap(s=>[s,s+'-2',s+'-3',s+'-4'])];
+ const a={id,date_of_birth:'2000-01-01',created_at:'2026-09-13',photo_manifest:paths.map(p=>({slot:p.replace(/-[234]$/,''),path:id+'/'+p+'.jpg'}))};
+ assert.equal(photoPaths(a).length,13);
+ const messages=buildMessages(a,paths.map(p=>'https://example.com/'+p+'.jpg'));
+ assert.deepEqual(messages.slice(1).map(m=>m.contents.contents.length),[12,1]);
+ assert.equal(messages[1].contents.contents[1].body.contents[0].text,'Front · Mid-length');
+ assert.throws(()=>photoPaths({...a,photo_manifest:[{slot:'mid-length',path:id+'/mid-length-2.jpg'}]}));
+});

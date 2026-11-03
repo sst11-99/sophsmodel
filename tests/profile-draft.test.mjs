@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readDraft,writeDraft,MAX_AGE} from '../profile-draft.mjs';
+const draft=()=>({step:2,name:'TEST',note:'Try dance',language:'th',choices:[['Music videos'],['DJ']],custom:['','custom draft'],requestId:crypto.randomUUID(),done:false});
+const memory=()=>{const m=new Map();return {getItem:k=>m.get(k),setItem:(k,v)=>m.set(k,v)}};
+test('draft preserves answers, language, step and retry identity across reopening',()=>{const s=memory(),d=draft();assert.equal(writeDraft(s,'a',d,1000),true);assert.deepEqual(readDraft(s,'a',2000),{...d,version:1,savedAt:1000});assert.equal(readDraft(s,'b',2000),null);});
+test('expired, corrupt or oversized browser drafts are ignored',()=>{const s=memory();writeDraft(s,'a',draft(),1000);assert.equal(readDraft(s,'a',MAX_AGE+1001),null);s.setItem('a','broken');assert.equal(readDraft(s,'a'),null);writeDraft(s,'a',{...draft(),note:'a'.repeat(1001)});assert.equal(readDraft(s,'a'),null);});
+test('blocked storage fails gracefully without pretending to save',()=>{const s={getItem(){throw Error()},setItem(){throw Error()}};assert.equal(writeDraft(s,'a',draft()),false);assert.equal(readDraft(s,'a'),null);});

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sophs Model — Models</title>
+<style>
+@font-face{font-family:Plex;src:url('fonts/IBMPlexMono-Regular.ttf')}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222;background:#fff;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}a{color:inherit;text-decoration:none}
+header{padding:22px 30px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;max-width:1700px;margin:auto}
+.brand{font:11px Plex,monospace;letter-spacing:normal;white-space:nowrap}
+.roster-links{justify-self:end;display:flex;gap:16px;font-size:12px;color:#666}.roster-links a{display:grid;place-items:center;min-height:44px;white-space:nowrap}.roster-links .model-login-link{color:#78519c}
+
+.tabs{--position:0;position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(3,1fr);width:264px;padding:4px;border-radius:999px;background:#f2f2f2;box-shadow:0 3px 16px #00000005;touch-action:pan-y;user-select:none}
+.thumb{position:absolute;z-index:-1;inset:4px auto 4px 4px;width:calc((100% - 8px)/3);border-radius:inherit;background:linear-gradient(150deg,#333,#191919);box-shadow:inset 0 1px 1px #ffffff40,0 2px 5px #0002;transform:translateX(calc(var(--position)*100%));transition:transform 360ms cubic-bezier(.42,0,.24,1);overflow:hidden}
+.thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 20%,#ffffff20,transparent 70%);pointer-events:none}
+.tabs button{border:0;background:none;min-height:44px;border-radius:999px;padding:8px 15px;font-size:12px;font-weight:400;transition:color .18s;color:#656565}
+.tabs button[aria-pressed=true]{color:#fff}.tabs button[data-division="apply"]{color:#d00000}.tabs.dragging .thumb{transition:none}
+main{padding:24px 28px 50px;max-width:1700px;margin:auto}.roster{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:48px 36px}
+.model{border:0;background:none;padding:0;min-width:0;text-align:center}.figure{height:clamp(205px,23vw,310px);display:flex;align-items:flex-end;justify-content:center;margin:0 0 16px}
+.figure img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;border-radius:18px;transition:transform .45s ease}
+.roster-portrait{height:100%;aspect-ratio:4/5;max-width:100%;overflow:hidden;border-radius:18px;display:block}.roster-portrait img{width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:0}.roster-portrait.sophie img{transform:scale(1.25);transform-origin:50% 0%}.model:hover .roster-portrait{translate:0 -3px}.name{display:block;font-size:13px;font-weight:400;line-height:1.45;letter-spacing:-.015em;color:#555}
+.unpictured .figure{border-bottom:1px solid #eee;width:64%;margin-left:auto;margin-right:auto}.unpictured .name{color:#757575}
+button:focus-visible,a:focus-visible{outline:2px solid #777;outline-offset:4px}
+dialog{border:0;border-radius:18px;padding:26px;width:min(850px,94vw);max-height:90dvh;background:#fff;color:#222;box-shadow:0 20px 80px #0002}
+dialog::backdrop{background:#0003;backdrop-filter:blur(8px)}
+.close{float:right;border:0;background:#f5f5f5;border-radius:50%;font-size:20px;line-height:1;width:44px;height:44px}
+.detail-head{padding:6px 0 24px}.detail-head h1{font-size:20px;font-weight:400;letter-spacing:-.03em;margin:0 0 7px}.detail-head p{font-size:12px;color:#777;margin:0}
+.photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.photos figure{margin:0}.photos img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;border-radius:18px}
+figcaption{font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#686868;margin-top:9px;line-height:1.4}
+.photo-pending{aspect-ratio:2/3;background:#f4f4f4;border-radius:3px}.photos [hidden]{display:none}
+.profile-dimensions{display:flex;justify-content:center;gap:clamp(20px,5vw,52px);margin:20px 0 0;font-size:12px;font-weight:400;line-height:1.5;text-align:center}
+.profile-dimensions[hidden]{display:none}.profile-dimensions div{min-width:0}.profile-dimensions dt{color:#777}.profile-dimensions dd{margin:3px 0 0;color:#555;white-space:nowrap}
+.booking-action{display:flex;justify-content:center;margin-top:20px}.book-now{min-height:44px;padding:11px 28px;border:0;border-radius:999px;background:linear-gradient(150deg,#333,#191919);color:#fff;font-size:12px;font-weight:400;box-shadow:inset 0 1px 1px #ffffff40,0 2px 5px #0002}
+.booking-contact{width:min(400px,92vw);padding:24px;text-align:center}.booking-contact h2{font-size:18px;font-weight:400;letter-spacing:-.02em;margin:14px 44px 20px}.booking-contact .close{position:absolute;right:14px;top:14px}.booking-contact dl{margin:0}.booking-contact dt{font-size:12px;color:#777;margin-top:12px}.booking-contact dd{margin:0;font-size:14px;font-weight:400}.booking-contact a{display:inline-flex;align-items:center;min-height:44px;overflow-wrap:anywhere;max-width:100%}
+@media(max-width:540px){.profile-dimensions{gap:0;justify-content:space-between;margin-top:20px;font-size:11px}.profile-dimensions div{flex:1}.profile-dimensions dd{margin-top:3px}}
+.roster.entering{animation:reveal 440ms cubic-bezier(.2,.6,.25,1) both}dialog[open]{animation:reveal 280ms ease-out}
+@keyframes reveal{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1200px){.roster{grid-template-columns:repeat(3,minmax(0,1fr));gap:38px 24px}.figure{height:clamp(220px,25vw,290px)}header{padding:16px 22px}main{padding:20px 22px 40px}}
+@media(min-width:768px){.brand{font-size:13px}}
+@media(max-width:540px){header{grid-template-columns:1fr auto;gap:6px 12px;padding:12px 18px}.tabs{grid-column:1/-1;grid-row:2;justify-self:center;width:252px;margin:6px 0 9px}
+main{padding:14px 16px 34px}.roster{gap:30px 14px}.figure{height:160px;margin-bottom:12px}.name{font-size:12px;line-height:1.5}.unpictured .figure{margin-bottom:12px}dialog{padding:18px;border-radius:16px}.detail-head h1{font-size:19px}.photos{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}}
+@media(max-width:350px){.roster{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+.booking-contact a[href^="mailto:"]{color:#007aff}.booking-contact a[href^="https://line.me/"]{color:#06c755}
+/* Reserve controls first; photographs share the remaining viewport height. */
+.model-dialog{width:min(900px,calc(100vw - 24px));height:min(620px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);padding:clamp(12px,2.5vw,24px);overflow:auto}
+.model-dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:12px}
+.model-dialog>.close{position:absolute;right:12px;top:12px;float:none;width:auto;min-width:76px;padding:0 14px;border-radius:999px;font-size:12px;font-weight:400}
+.model-dialog .detail-head{padding:0 92px 0 0;min-height:44px}
+.model-dialog .detail-head h1{font-size:clamp(17px,2vw,20px);margin-bottom:4px}
+.model-dialog .photos{min-height:0;grid-template-rows:minmax(0,1fr);gap:12px}
+.model-dialog .photos figure{min-height:0;min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px}
+.model-dialog .photos img,.model-dialog .photo-pending{width:100%;height:100%;min-height:0;aspect-ratio:auto;object-fit:contain;border-radius:14px}
+.model-dialog figcaption{font-size:11px;line-height:1.25;margin:0}
+.model-dialog .profile-dimensions{margin:0;gap:clamp(8px,4vw,40px);font-size:11px}
+.model-dialog .booking-action{margin:0}
+@media(max-width:540px) and (orientation:portrait){.model-dialog{height:min(760px,calc(100dvh - 24px))}.model-dialog .photos{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:10px}}
+@media(orientation:landscape) and (max-height:540px){.model-dialog[open]{gap:6px;padding:12px}.model-dialog .photos{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}.model-dialog .profile-dimensions dd{margin-top:0}.model-dialog .detail-head p{font-size:10px}}
+@media(max-height:280px){.model-dialog .photos{min-height:60px}}
+/* A quiet six-position roster and a card that unfolds from its portrait. */
+main{max-width:1200px;padding-top:clamp(24px,5vh,64px)}
+.roster{grid-template-columns:repeat(3,minmax(0,1fr));gap:44px 48px}
+.figure{height:clamp(210px,23vw,290px)}
+.unpictured .figure{width:100%;max-width:232px;border:0;border-radius:18px;background:#f7f7f7;align-items:center}
+.coming-soon{font-size:11px;color:#999;font-weight:400}
+.model-dialog{width:min(1040px,calc(100vw - 32px));height:min(650px,calc(100dvh - 32px));background:rgba(255,255,255,.94);backdrop-filter:blur(24px);isolation:isolate}
+.model-dialog[open]{animation:none}
+.model-dialog::backdrop{background:#ffffff8c;backdrop-filter:blur(14px)}
+.turning-portrait{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;z-index:3;pointer-events:none;border-radius:inherit;background:#f5f5f5}
+.turning-portrait img{object-fit:cover;object-position:center 25%}
+@media(max-width:700px){.roster{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 20px}.figure{height:clamp(170px,35vw,260px)}}
+@media(max-width:540px) and (orientation:portrait){.model-dialog{width:calc(100vw - 24px);height:min(720px,calc(100dvh - 24px))}}
+/* Equal breathing room above and below the booking control. */
+.model-dialog .booking-action{padding:clamp(12px,2.5vw,24px) 0 12px;min-height:68px}
+.model-dialog .profile-dimensions{padding-top:6px}
+@media(orientation:landscape) and (max-height:540px){.model-dialog .booking-action{padding-block:4px;min-height:52px}.model-dialog .profile-dimensions{padding-top:0}}
+
+/* Original photographed paper is clipped in the page: no model pixels are redrawn. */
+.roster .figure{height:clamp(250px,29vw,370px);align-items:flex-start;margin-bottom:18px}
+.roster-portrait.wall-sheet{width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0;overflow:visible;display:block;filter:drop-shadow(2px 5px 3px #00000012);transition:translate .35s ease}
+.wall-art{display:block;width:100%;height:100%;overflow:visible}
+
+.model .example-label{display:block;font-size:10px;color:#999;margin-top:3px}
+.model-dialog.card-view{width:min(1000px,calc(100vw - 32px));height:min(940px,calc(100dvh - 32px));grid-template-rows:auto minmax(0,1fr) auto}
+.model-dialog.card-view .photos{display:block;min-height:0;height:100%}
+.model-dialog.card-view .photos figure{height:100%;display:block}
+.model-dialog.card-view .wall-art{filter:drop-shadow(2px 5px 4px #0000000e)}
+.model-dialog.card-view .profile-dimensions{display:none}
+.model-dialog.card-view .booking-action{padding:8px 0 0;min-height:52px}
+.turning-portrait.wall-sheet{background:none;border-radius:0;filter:none}
+@media(max-width:700px){.roster .figure{height:clamp(220px,47vw,310px)}.roster{gap:36px 20px}}
+@media(max-width:540px){main{padding-inline:16px}.roster .figure{height:clamp(205px,53vw,280px)}.roster{gap:32px 16px}.model-dialog.card-view{width:calc(100vw - 16px);height:calc(100dvh - 16px);padding:12px}}
+@media(prefers-reduced-motion:reduce){.wall-sheet{transition:none!important}}
+/* Flat paper objects, with a readable reverse side. */
+main{max-width:1360px}
+.roster{column-gap:36px}
+.roster .figure{height:clamp(290px,34vw,440px);align-items:center}
+.wall-art{overflow:hidden}
+.roster-portrait.wall-sheet{filter:drop-shadow(0 2px 2px #0000000d)}
+.unpictured .figure{background:none;border-radius:0}
+.model-dialog.card-view{border-radius:0;background:#fff;grid-template-rows:auto minmax(0,1fr) auto auto;max-height:calc(100dvh - 16px)}
+.model-dialog.card-view .profile-dimensions:not([hidden]){display:flex;flex-wrap:wrap;gap:12px 28px;padding:12px 0;font-size:13px}
+.model-dialog.card-view .profile-dimensions dd{color:#222}
+.model-dialog.card-view .wall-art{overflow:hidden;filter:none}
+@media(max-width:540px){.roster{column-gap:12px}.roster .figure{height:clamp(225px,62vw,330px)}.model-dialog.card-view .profile-dimensions:not([hidden]){gap:10px 16px;font-size:12px}.profile-dimensions div{flex:0 0 auto}}
+/* Same material on roster, profile and flip; source photographs stay untouched. */
+.roster-portrait.wall-sheet{filter:drop-shadow(-3px 5px 3px #00000016)}
+.model-dialog.card-view .wall-art{filter:drop-shadow(-2px 4px 2px #00000012)}
+.card-light,.card-sheen{pointer-events:none}
+.card-sheen{opacity:.85;transition:opacity .4s ease}
+.card-shadow-rest,.card-shadow-lift,.card-contact{transition:opacity .35s ease}
+.card-shadow-lift{opacity:0}
+@media(hover:hover) and (pointer:fine){
+ .model:hover .wall-sheet{translate:0 -5.5px}
+ .model:hover .card-sheen{opacity:1}
+ .model:hover .card-shadow-rest{opacity:1}
+ .model:hover .card-shadow-lift{opacity:.03}
+ .model:hover .card-contact{opacity:1}
+}
+.model:focus-visible .wall-sheet{translate:0 -5.5px}
+.model:focus-visible .card-sheen{opacity:1}
+.model:focus-visible .card-shadow-rest{opacity:1}
+.model:focus-visible .card-shadow-lift{opacity:.03}
+.model:focus-visible .card-contact{opacity:1}
+
+@media(prefers-reduced-motion:reduce){.card-sheen,.card-shadow-rest,.card-shadow-lift,.card-contact{animation:none;transition:none}}
+/* Phone profiles preserve controls and readable details, even in short landscape views. */
+@media(max-width:700px){
+ .model-dialog.card-view{padding:16px;max-width:calc(100vw - 16px);gap:8px}
+ .model-dialog.card-view .photos{min-height:120px}
+ .model-dialog.card-view .profile-dimensions:not([hidden]){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 6px;font-size:12px}
+ .model-dialog.card-view .profile-dimensions dd{white-space:normal}
+ .model-dialog.card-view .booking-action{min-height:44px;padding:0}
+ .roster-links{gap:12px}
+}
+@media(max-height:500px){.model-dialog.card-view{grid-template-rows:auto minmax(120px,1fr) auto auto;overflow:auto}}
+/* Shadows belong to each paper object, rather than a uniform wrapper filter. */
+.roster-portrait.wall-sheet{filter:none}
+.wall-art{overflow:visible}
+/* Three divisions share the same tap, drag and keyboard control. */
+.roster.is-empty{position:fixed;inset:0;display:grid;grid-template-columns:1fr;place-items:center;min-height:0;margin:0;padding:24px;pointer-events:none}
+header{position:relative;z-index:1}
+.applicants-pending{margin:0;font-size:clamp(16px,2vw,22px);font-weight:400;letter-spacing:-.025em;color:#888;text-align:center}
+.roster.is-ai{grid-template-columns:minmax(0,390px);justify-content:center}
+@media(max-width:540px){.roster.is-ai{grid-template-columns:minmax(0,260px)}.roster.is-ai .figure{height:365px}}
+/* Taped roster fronts flip into the original individual-photo profile layout. */
+.model-dialog.gallery-view{background:#fff;grid-template-rows:auto minmax(120px,1fr) auto auto}
+.gallery-view .photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}
+.gallery-view .photos figure{grid-template-rows:minmax(0,1fr);gap:0}
+.model-dialog.gallery-view .profile-dimensions:not([hidden]){display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:16px 12px;padding:12px 0 4px;font-size:14px}
+.gallery-view .profile-dimensions dt{font-weight:400;color:#222}
+.gallery-view .profile-dimensions dd{font-size:16px;color:#333;margin-top:5px;white-space:normal}
+.gallery-view .official-pending{display:grid;place-items:center;text-align:center;padding:10px;color:#999;font-size:12px;border-radius:14px;height:100%;min-height:0;aspect-ratio:auto}
+@media(max-width:540px) and (orientation:portrait){.gallery-view .photos{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}.model-dialog.gallery-view .profile-dimensions:not([hidden]){grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px;padding:8px 0 2px;font-size:12px}.gallery-view .profile-dimensions dd{font-size:14px;margin-top:3px}.model-dialog.gallery-view{height:calc(100dvh - 24px)}}
+/* Touch screens should not retain mouse-hover lifts after tapping. */
+@media(hover:none){.model:hover .wall-sheet,.model:hover .roster-portrait{translate:none}.model:hover .card-sheen{opacity:.85}}
+@media(pointer:coarse){.tabs button,.roster-links a,.book-now,.close{min-height:48px}.close{min-width:48px}}
+@media(max-height:420px){.model-dialog.gallery-view{grid-template-rows:auto minmax(90px,1fr) auto auto;gap:6px}.model-dialog .booking-action{min-height:48px;padding:0}}
+</style>
+</head>
+<body>
+<header><span class="brand">SM-26</span><nav class="tabs" aria-label="Models and application"><span class="thumb" aria-hidden="true"></span><button aria-pressed="true" data-division="female" aria-controls="roster">Female</button><button aria-pressed="false" data-division="male" aria-controls="roster">Male</button><button aria-pressed="false" data-division="apply">Apply</button></nav><nav class="roster-links" aria-label="Account and navigation"><a class="model-login-link" href="model-login.html" target="_parent">Login</a></nav></header>
+<main><section id="roster" class="roster" aria-label="Model roster"></section></main>
+<dialog class="model-dialog" aria-labelledby="model-name"><button class="close" aria-label="Back to models">← Back</button><div class="detail-head"><h1 id="model-name"></h1><p id="model-reference"></p></div><div class="photos"></div><dl class="profile-dimensions" aria-label="Measurements" hidden></dl><div class="booking-action"><button class="book-now" aria-haspopup="dialog">Book Model</button></div></dialog>
+<dialog class="booking-contact" aria-labelledby="booking-title"><button class="close" aria-label="Close booking contacts">×</button><h2 id="booking-title">Book Model</h2><dl><dt>Email</dt><dd><a href="mailto:sophsmodels@gmail.com">sophsmodels@gmail.com</a></dd><dt>LINE</dt><dd><a href="https://line.me/R/ti/p/%40799zcfji" target="_blank" rel="noopener noreferrer" aria-label="Add Sophs Model on LINE">Add us on LINE ↗</a></dd></dl></dialog>
+<script>
+const roster=document.querySelector('.roster'),dialog=document.querySelector('dialog'),tabs=document.querySelector('.tabs'),buttons=[...tabs.querySelectorAll('button')];
+const base='assets/';
+const divisions={female:['Sophie Trau','Jennifer','Duang'],male:[]};
+// User-supplied wall references for the represented model roster.
+// Coordinates are measured on the displayed source photo, before viewport scaling.
+const wallCards={
+ 'Sophie Trau':{file:'wall-cards/sophie-card-web.jpg',size:[1086,1448],box:[50,8,986,1422],paper:[50,68,986,1362],outline:'50,68 382,68 382,8 688,8 688,68 1036,68 1036,1430 50,1430'},
+ 'Jennifer':{file:'wall-cards/jennifer-card-web.jpg',size:[1086,1448],box:[102,46,884,1348],paper:[102,101,884,1293],outline:'102,101 427,101 427,46 659,46 659,101 986,101 986,1394 102,1394'},
+ 'Duang':{file:'wall-cards/duang-card-web.jpg',size:[1368,1824],box:[0,0,1200,860],paper:[0,60,1200,800],flatOriginal:true},
+};
+// Transcribed from the supplied paper cards; no invented model attributes.
+const modelDetails={
+ 'Sophie Trau':[['Height','177 cm'],['Bust','32″'],['Waist','25″'],['Hips','35″'],['Shoes','EU 41'],['Hair','Black'],['Eyes','Dark brown']],
+ 'Jennifer':[['Height','175 cm'],['Bust','35″'],['Waist','24″'],['Hips','38″'],['Shoes','41'],['Hair','Brown'],['Eyes','Brown']],
+ 'Duang':[['Height','174 cm'],['Bust','31″'],['Waist','26″'],['Hips','37″'],['Shoes','41–42']]
+};
+let sheetId=0;
+function paperArtwork(name){
+ const card=wallCards[name],ns='http://www.w3.org/2000/svg';
+ const make=(tag,attrs)=>{const el=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([key,value])=>el.setAttribute(key,String(value)));return el;};
+ const svg=make('svg',{viewBox:card.box.join(' '),class:'wall-art',role:'img','aria-label':name+' — taped model comp card',preserveAspectRatio:'xMidYMid meet'});
+ if(card.flatOriginal){
+  // Present the original print on a square-edged paper surface; no generated face.
+  svg.append(make('rect',{x:0,y:60,width:1200,height:800,fill:'#f8f8f6'}));
+  const print=make('svg',{x:50,y:125,width:1100,height:660,viewBox:'130 555 1090 648',preserveAspectRatio:'none',overflow:'hidden'});
+  print.append(make('image',{href:base+card.file,width:1368,height:1824,preserveAspectRatio:'none'}));
+  svg.append(print);return finishCard(svg,card,make);
+ }
+ const id='paper-edge-'+(++sheetId),defs=make('defs',{}),clip=make('clipPath',{id});
+ const [px,py,pw,ph]=card.paper;
+ clip.append(make('rect',{x:px,y:py,width:pw,height:ph}));defs.append(clip);
+ const image=make('image',{href:base+card.file,width:card.size[0],height:card.size[1],preserveAspectRatio:'none','clip-path':'url(#'+id+')'});
+ svg.append(defs,image);
+ // Hide the photographed tape remnant on the blank top margin before the new strip.
+ svg.append(make('rect',{x:px+pw*.29,y:py,width:pw*.42,height:pw*.045,fill:'#f3f3f5'}));
+ return finishCard(svg,card,make);
+}
+// Shared default for every model: thick satin stock, illuminated from top right.
+function finishCard(svg,card,make){
+ const [x,y,w,h]=card.paper||card.box,[bx,by,bw,bh]=card.box,depth=w*.0012;
+ const top=Math.min(by,y-w*.06);
+ svg.setAttribute('viewBox',[bx-w*.012,top-w*.008,bw+w*.024,by+bh-top+w*.02].join(' '));
+ const id='card-finish-'+(++sheetId),defs=make('defs',{});
+ // Different attachment shapes, all projecting down-left from the top-right light.
+ const material=card.file.includes('sophie')?0:card.file.includes('jennifer')?1:card.flatOriginal?2:3;
+ const shadowFilter=make('filter',{id:id+'-shadow',x:'-30%',y:'-25%',width:'160%',height:'170%','color-interpolation-filters':'sRGB'});
+ shadowFilter.append(make('feGaussianBlur',{stdDeviation:w*[.008,.005,.009,.006][material]}));defs.append(shadowFilter);
+ const contours=[
+  `M ${x+5} ${y+8} L ${x+w-4} ${y+8} L ${x+w-6} ${y+h+5} Q ${x+w*.32} ${y+h+9} ${x-w*.033} ${y+h+w*.035} Q ${x-w*.018} ${y+h*.7} ${x+5} ${y+8} Z`,
+  `M ${x+2} ${y+6} L ${x+w-4} ${y+6} Q ${x+w-w*.026} ${y+h*.72} ${x+w-w*.014} ${y+h+w*.03} Q ${x+w*.65} ${y+h+w*.026} ${x-3} ${y+h+4} Z`,
+  `M ${x+3} ${y+7} L ${x+w-4} ${y+7} L ${x+w-8} ${y+h+8} Q ${x+w*.46} ${y+h+w*.065} ${x-w*.018} ${y+h+w*.012} Z`,
+  `M ${x+3} ${y+5} L ${x+w-3} ${y+6} L ${x+w-7} ${y+h+12} Q ${x+w*.28} ${y+h+w*.024} ${x-w*.022} ${y+h+8} Q ${x-w*.031} ${y+h*.43} ${x+3} ${y+5} Z`
+ ];
+ const shadow=make('path',{class:'card-shadow-rest',d:contours[material],fill:'#39342c','fill-opacity':[.16,.14,.13,.15][material],filter:'url(#'+id+'-shadow)'});
+ const contact=make('rect',{class:'card-contact',x:x-w*.0015,y:y+w*.002,width:w,height:h,fill:'#3b352b','fill-opacity':'.08'});
+ // Retain the dark core and contact shadow; add a softer outer silhouette on lift.
+ const liftedFilter=make('filter',{id:id+'-lift-shadow',x:'-35%',y:'-30%',width:'175%',height:'185%','color-interpolation-filters':'sRGB'});
+ liftedFilter.append(make('feGaussianBlur',{stdDeviation:w*.012}));defs.append(liftedFilter);
+ const lifted=make('g',{class:'card-shadow-lift','pointer-events':'none'});
+ lifted.append(make('path',{d:contours[material],fill:'#39342c','fill-opacity':'.10',filter:'url(#'+id+'-lift-shadow)',transform:`translate(${x-w*.0125} ${y+h*.023}) scale(1.0125 1.009) translate(${-x} ${-y})`}));
+ const light=make('linearGradient' ,{id:id+'-light',x1:'100%',y1:'0%',x2:'0%',y2:'100%'});
+ for(const [offset,color,opacity] of [['0%','#fff','.065'],['38%','#fff','.012'],['75%','#fff','0'],['100%','#302b22','.025']]) light.append(make('stop',{offset,'stop-color':color,'stop-opacity':opacity}));
+ defs.append(light);
+ const edge=make('rect',{x:x-depth,y:y+depth,width:w,height:h,fill:'#e5e2dc',stroke:'#dedbd5','stroke-width':depth*.35});
+ svg.prepend(defs,shadow,lifted,contact,edge);
+ // Fine, neutral paper tooth: a translucent texture, not a change to the photos.
+ const tooth=make('filter',{id:id+'-tooth',x:0,y:0,width:'100%',height:'100%','color-interpolation-filters':'sRGB'});
+ tooth.append(make('feTurbulence',{type:'fractalNoise',baseFrequency:'.7',numOctaves:3,seed:material+11,stitchTiles:'stitch'}));
+ tooth.append(make('feColorMatrix',{type:'saturate',values:0}));defs.append(tooth);
+ svg.append(make('rect',{class:'paper-tooth',x,y,width:w,height:h,opacity:'.055',filter:'url(#'+id+'-tooth)','pointer-events':'none'}));
+ svg.append(make('rect',{x,y,width:w,height:h,fill:'url(#'+id+'-light)',class:'card-light'}));
+ // A bowed print catches the top-right light at its edge, with a faint handling crease.
+ // Normalized geometry keeps the light and softness consistent at every viewport.
+ const glossClip=make('clipPath',{id:id+'-gloss-clip'});
+ glossClip.append(make('rect',{x:0,y:0,width:1,height:1}));defs.append(glossClip);
+ const gloss=make('g',{class:'card-sheen','pointer-events':'none','aria-hidden':'true',transform:`translate(${x} ${y}) scale(${w} ${h})`,'clip-path':'url(#'+id+'-gloss-clip)'});
+ const soft=make('filter',{id:id+'-gloss-soft',x:'-50%',y:'-50%',width:'200%',height:'200%','color-interpolation-filters':'sRGB'});
+ soft.append(make('feGaussianBlur',{stdDeviation:'.007 .005'}));defs.append(soft);
+ const fade=make('linearGradient',{id:id+'-gloss-fade',x1:'100%',y1:'0%',x2:'0%',y2:'100%'});
+ for(const [offset,opacity] of [['0%','.045'],['18%','.30'],['42%','.19'],['72%','.045'],['100%','0']]) fade.append(make('stop',{offset,'stop-color':'#fff','stop-opacity':opacity}));
+ defs.append(fade);
+ const bends=[
+  'M 1.03 .08 C .86 .19 .94 .33 .90 .48 C .88 .57 .89 .64 .91 .75',
+  'M 1.02 .17 C .85 .28 .91 .42 .90 .56 C .89 .68 .86 .77 .89 .90',
+  'M 1.03 .05 C .97 .21 .99 .45 .94 .65 C .91 .78 .82 .85 .68 .88',
+  'M 1.02 .11 C .92 .20 .96 .37 .93 .51 C .91 .62 .94 .73 .89 .85'
+ ];
+ gloss.append(make('path',{d:bends[material],fill:'none',stroke:'url(#'+id+'-gloss-fade)','stroke-width':'.085',filter:'url(#'+id+'-gloss-soft)'}));
+ const creases=[
+  'M .76 -.02 C .84 .025 .91 .065 1.02 .075',
+  'M -.015 .64 C .045 .65 .095 .70 .12 .76 C .135 .795 .15 .82 .18 .835',
+  'M .64 1.015 C .68 .945 .735 .905 .79 .91 C .85 .915 .89 .955 .92 1.015',
+  'M .77 -.02 C .87 .045 .91 .08 1.02 .095'
+ ];
+ // Sophie retains her approved corner fold, with exactly 30% more contrast.
+ // Jennifer has a left-edge handling dent; Duang a shallow thumb dent at the bottom.
+ const creaseStrength=material===0?1.3:1;
+ const creaseGroup=make('g',{class:'paper-crease'});
+ if(material===1||material===2){
+  const creaseFade=make('linearGradient',{id:id+'-crease-fade',x1:'0%',y1:'0%',x2:'100%',y2:'0%'});
+  for(const [offset,opacity] of [['0%','0'],['20%','.85'],['45%','1'],['72%','.65'],['100%','0']]) creaseFade.append(make('stop',{offset,'stop-color':'#fff','stop-opacity':opacity}));
+  const creaseMask=make('mask',{id:id+'-crease-mask',maskContentUnits:'objectBoundingBox'});
+  creaseMask.append(make('rect',{width:1,height:1,fill:'url(#'+id+'-crease-fade)'}));defs.append(creaseFade,creaseMask);
+  creaseGroup.setAttribute('mask','url(#'+id+'-crease-mask)');
+ }
+ creaseGroup.append(make('path',{d:creases[material],fill:'none',stroke:'#625c50','stroke-opacity':.022*creaseStrength,'stroke-width':'.018',transform:'translate(-.004 .006)',filter:'url(#'+id+'-gloss-soft)'}));
+ creaseGroup.append(make('path',{d:creases[material],fill:'none',stroke:'#fff','stroke-opacity':.24*creaseStrength,'stroke-width':'.020',filter:'url(#'+id+'-gloss-soft)'}));
+ gloss.append(creaseGroup);
+ svg.append(gloss);
+ svg.append(make('path',{d:`M ${x} ${y} H ${x+w} V ${y+h}`,fill:'none',stroke:'#fff','stroke-opacity':'.55','stroke-width':depth*.45,class:'card-light'}));
+ // Shared material: every present and future card uses the same tape construction.
+ appendPaperTape(svg,{paper:[x,y,w,h],seed:card.file,id},make);
+ return svg;
+}
+// Reusable tape in paper coordinates. Keep the substrate boundary horizontal,
+// independently of the strip angle. See TAPE-MATERIAL.md for the material contract.
+function appendPaperTape(svg,{paper:[x,y,w,h],seed:assetKey,id},make){
+ let seed=[...assetKey].reduce((n,c)=>(Math.imul(n,31)+c.charCodeAt(0))>>>0,7);
+ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ const tw=w*(.25+random()*.055),th=w*(.095+random()*.018);
+ const tx=x+w*(.46+random()*.09)-tw/2,ty=y-th*(.48+random()*.10);
+ const angle=(random()-.5)*8,cx=tx+tw/2,cy=ty+th/2,radians=angle*Math.PI/180;
+ const rotate=([px,py])=>[cx+(px-cx)*Math.cos(radians)-(py-cy)*Math.sin(radians),cy+(px-cx)*Math.sin(radians)+(py-cy)*Math.cos(radians)];
+ const defs=make('defs',{}),tape=make('g',{class:'card-tape','pointer-events':'none','aria-hidden':'true','data-tape-seed':assetKey});
+ const tears=[
+  [[[.03,0],[0,.12],[.075,.22],[.018,.30],[.045,.43],[.012,.56],[.13,.61],[.032,.68],[.065,.82],[0,1]],[[.97,0],[1,.16],[.95,.25],[.985,.34],[.90,.40],[.965,.51],[.93,.62],[1,.72],[.955,.87],[.98,1]]],
+  [[[.08,0],[.02,.08],[.065,.20],[.015,.32],[.025,.52],[.10,.58],[.035,.66],[.07,.81],[.015,.91],[.025,1]],[[1,0],[.97,.12],[.985,.23],[.91,.32],[.855,.48],[.88,.59],[.94,.66],[.925,.79],[.99,.86],[.965,1]]],
+  [[[.02,0],[.11,.12],[.065,.25],[.14,.36],[.10,.43],[.075,.59],[.04,.64],[.07,.77],[.01,.89],[.03,1]],[[.94,0],[.985,.08],[.95,.21],[1,.32],[.96,.40],[.99,.49],[.92,.57],[.985,.71],[.955,.84],[1,1]]],
+  [[[.01,0],[.055,.12],[.01,.22],[.085,.36],[.02,.46],[.045,.59],[.12,.72],[.035,.81],[.06,.93],[.02,1]],[[.98,0],[.93,.15],[.99,.27],[.96,.41],[.88,.54],[.965,.62],[.92,.76],[.975,.85],[.95,1]]]
+ ];
+ const [left,right]=tears[Math.floor(random()*tears.length)];
+ const points=[...left.slice(0,1),[.31,.015],[.68,-.01],...right,[.67,.99],[.3,1.015],...left.slice(1).reverse()]
+  .map(([u,v],i)=>rotate([tx+(u+(i%3===0?(random()-.5)*.012:0))*tw,ty+v*th]));
+ const outline='M '+points.map(p=>p.join(' ')).join(' L ')+' Z';
+ const clip=make('clipPath',{id:id+'-tape-clip',clipPathUnits:'userSpaceOnUse'});clip.append(make('path',{d:outline}));defs.append(clip);
+ const pigment=make('linearGradient',{id:id+'-tape',gradientUnits:'userSpaceOnUse',x1:tx+tw,y1:ty,x2:tx,y2:ty+th});
+ pigment.append(make('stop',{offset:'0%','stop-color':'#ccbb8c','stop-opacity':'.48'}),make('stop',{offset:'100%','stop-color':'#b8a573','stop-opacity':'.55'}));defs.append(pigment);
+ tape.append(make('path',{d:outline,transform:`translate(${-w*.0007} ${w*.0015})`,fill:'#4c412c','fill-opacity':'.085'}));
+ tape.append(make('path',{class:'tape-wall',d:outline,fill:'url(#'+id+'-tape)',stroke:'#a99b79','stroke-opacity':'.14','stroke-width':w*.0005}));
+ const surface=make('g',{'clip-path':'url(#'+id+'-tape-clip)'});
+ // Added pigment only where the tape contacts paper; the wall portion stays translucent.
+ surface.append(make('rect',{class:'tape-paper',x,y,width:w,height:h,fill:'#a79669','fill-opacity':.15+random()*.025}));
+ const grain=make('g',{transform:`rotate(${angle} ${cx} ${cy})`});
+ for(let i=0;i<42;i++){
+  const gx=tx+random()*tw,gy=ty+random()*th;
+  grain.append(make('path',{d:`M ${gx} ${gy} l ${tw*(.015+random()*.065)} ${th*(random()-.5)*.025}`,stroke:i%3?'#fff9e5':'#8d7a51','stroke-opacity':i%3?'.13':'.065','stroke-width':w*.0009}));
+ }
+ surface.append(grain);
+ // A tiny light-facing shoulder and underside ridge bridge the paper's thickness.
+ // These do not rotate with the strip: both are clipped to its actual torn outline.
+ const edgeBend=w*(.0005+random()*.0004),ridge=`M ${tx-tw*.1} ${y} Q ${cx} ${y+edgeBend} ${tx+tw*1.1} ${y}`;
+ surface.append(make('path',{class:'tape-edge-shadow',d:ridge,transform:`translate(0 ${w*.001})`,fill:'none',stroke:'#78694b','stroke-opacity':'.14','stroke-width':w*.0013}));
+ surface.append(make('path',{class:'tape-edge-light',d:ridge,transform:`translate(0 ${-w*.0006})`,fill:'none',stroke:'#fffbed','stroke-opacity':'.20','stroke-width':w*.001}));
+ tape.append(surface);svg.append(defs,tape);
+ return tape;
+}
+let current='female',gesture=null,suppressClick=false,settleTimer;
+let profileSource=null,profileAnimations=[],profileClosing=false;
+function clearProfileMotion(){profileAnimations.forEach(animation=>animation.cancel());profileAnimations=[];dialog.querySelector('.turning-portrait')?.remove();}
+function unfoldProfile(source,closing=false){
+ clearProfileMotion();
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){if(closing)dialog.close();return;}
+ const start=source.querySelector('.roster-portrait').getBoundingClientRect(),end=dialog.getBoundingClientRect();
+ const portrait=source.querySelector('.roster-portrait').cloneNode(true);
+ portrait.replaceChildren(paperArtwork(source.dataset.model));
+ portrait.classList.add('turning-portrait');portrait.setAttribute('aria-hidden','true');dialog.append(portrait);
+ const timing={duration:760,easing:'cubic-bezier(.4,0,.2,1)',fill:'both',direction:closing?'reverse':'normal'};
+ const sx=start.width/end.width,sy=start.height/end.height;
+ const dx=start.left+start.width/2-end.left-end.width/2,dy=start.top+start.height/2-end.top-end.height/2;
+ // The paper turns edge-on; the readable profile appears on the reverse face.
+ profileAnimations.push(dialog.animate([
+  {transform:`perspective(1600px) translate(${dx}px,${dy}px) rotateY(0deg) scale(${sx},${sy})`,offset:0},
+  {transform:`perspective(1600px) translate(${dx*.4}px,${dy*.4}px) rotateY(90deg) scale(.75)`,offset:.49},
+  {transform:`perspective(1600px) translate(${dx*.4}px,${dy*.4}px) rotateY(-90deg) scale(.75)`,offset:.5},
+  {transform:'perspective(1600px) translate(0,0) rotateY(0deg) scale(1)',offset:1}
+ ],timing));
+ profileAnimations.push(portrait.animate([{opacity:1,offset:0},{opacity:1,offset:.49},{opacity:0,offset:.5},{opacity:0,offset:1}],timing));
+ const content=[...dialog.children].filter(child=>child!==portrait);
+ content.forEach(child=>profileAnimations.push(child.animate([{opacity:0,offset:0},{opacity:0,offset:.49},{opacity:1,offset:.5},{opacity:1,offset:1}],timing)));
+ profileAnimations[0].finished.then(()=>{clearProfileMotion();if(closing)dialog.close();}).catch(()=>{});
+}
+function closeProfile(){
+ if(profileClosing||!dialog.open)return;
+ profileClosing=true;
+ if(!profileSource?.isConnected){dialog.close();return;}
+ unfoldProfile(profileSource,true);
+}
+function openProfile(name,index,division,source){
+ profileClosing=false;
+ profileSource=source;
+ document.querySelector('#model-name').textContent=name;
+ document.querySelector('#model-reference').textContent='SMR-'+(division==='female'?'F':'M')+String(index+1).padStart(2,'0');
+ dialog.classList.remove('card-view');dialog.classList.add('gallery-view');
+ const card=wallCards[name];
+ const dimensions=document.querySelector('.profile-dimensions');
+ const facts=modelDetails[name]||[];
+ dimensions.replaceChildren(...facts.map(([label,value])=>{const row=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;row.append(dt,dd);return row;}));
+ dimensions.hidden=!facts.length;
+ const galleries={
+  'Sophie Trau':[['sophie-trau-000-web.jpg','Portrait'],['sophie-trau-other-v2-web.jpg','Other'],['sophie-trau-002-web.jpg','Mid-length'],['sophie-trau-003-web.jpg','Three-quarter portrait']],
+ };
+ const shots=galleries[name]||[[null,'Portrait'],[null,'Side profile'],[null,'Full length'],[null,'Additional photo']];
+ document.querySelector('.photos').replaceChildren(...shots.map(([file,label])=>{
+  const figure=document.createElement('figure');
+  if(file){const photo=document.createElement('img');photo.src=base+file;photo.alt=name+' — '+label;photo.decoding='async';figure.append(photo);}
+  else{const pending=document.createElement('div');pending.className='photo-pending official-pending';pending.textContent='Photos coming soon';figure.append(pending);}
+  return figure;
+ }));
+ document.querySelector('.book-now').hidden=false;
+ dialog.showModal();
+ unfoldProfile(source);
+}
+function render(division){
+ current=division;roster.classList.toggle('is-empty',division==='male');roster.replaceChildren(...divisions[division].map((name,index)=>{
+  const card=document.createElement(name?'button':'div'),figure=document.createElement('span'),label=document.createElement('span');
+  card.className='model';if(name)card.dataset.model=name;if(name)card.setAttribute('aria-label','View '+name);figure.className='figure';label.className='name';label.textContent=name||'N/A';
+  if(wallCards[name]){const frame=document.createElement('span');frame.className='roster-portrait wall-sheet';frame.append(paperArtwork(name));figure.append(frame);}
+  else{card.classList.add('unpictured');const pending=document.createElement('span');pending.className='coming-soon';pending.textContent='Coming soon';figure.append(pending);}
+  card.append(figure,label);if(name)card.addEventListener('click',()=>openProfile(name,index,division,card));return card;
+ }));
+ if(division==='male'){const pending=document.createElement('p');pending.className='applicants-pending';pending.textContent='Applicants Pending';roster.append(pending);}
+ roster.classList.remove('entering');requestAnimationFrame(()=>roster.classList.add('entering'));
+}
+function select(division,immediate=false){
+ if(window.parent!==window&&division!=='apply') window.parent.modelingSetDivision?.(division);
+ clearTimeout(settleTimer);tabs.classList.remove('dragging');tabs.style.setProperty('--position',buttons.findIndex(button=>button.dataset.division===division));
+ buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.division===division)));
+ if(division==='apply'){
+  const openApplication=()=>{
+   // Restore the previous division so closing Apply never reopens it automatically.
+   select(current,true);
+   if(window.parent!==window&&window.parent.modelingNavigate)window.parent.modelingNavigate('apply');
+   else window.location.assign('./#apply');
+  };
+  settleTimer=setTimeout(openApplication,matchMedia('(prefers-reduced-motion: reduce)').matches?0:220);
+  return;
+ }
+ current=division;
+ if(immediate)render(division);else settleTimer=setTimeout(()=>render(division),matchMedia('(prefers-reduced-motion: reduce)').matches?0:220);
+}
+buttons.forEach(button=>button.addEventListener('click',()=>{if(suppressClick)return;select(button.dataset.division)}));
+tabs.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const at=buttons.findIndex(button=>button.dataset.division===current);const index=event.key==='Home'?0:event.key==='End'?2:Math.max(0,Math.min(2,at+(event.key==='ArrowRight'?1:-1)));select(buttons[index].dataset.division);buttons[index].focus()}});
+tabs.addEventListener('pointerdown',event=>{if(!event.isPrimary||event.button!==0)return;gesture={id:event.pointerId,x:event.clientX,y:event.clientY,initial:buttons.findIndex(button=>button.dataset.division===current),position:buttons.findIndex(button=>button.dataset.division===current),moved:false}});
+tabs.addEventListener('pointermove',event=>{
+ if(!gesture||event.pointerId!==gesture.id)return;
+ const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+ if(!gesture.moved&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>7){gesture=null;return}
+ if(Math.abs(dx)>6){gesture.moved=true;tabs.classList.add('dragging');tabs.setPointerCapture(event.pointerId)}
+ if(gesture.moved){gesture.position=Math.max(0,Math.min(2,gesture.initial+dx/((tabs.getBoundingClientRect().width-8)/3)));tabs.style.setProperty('--position',gesture.position)}
+});
+function finish(event,cancelled=false){
+ if(!gesture||event.pointerId!==gesture.id)return;
+ const ended=gesture;gesture=null;
+ if(tabs.hasPointerCapture(event.pointerId))tabs.releasePointerCapture(event.pointerId);
+ if(ended.moved){suppressClick=true;select(cancelled?current:buttons[Math.round(ended.position)].dataset.division);setTimeout(()=>suppressClick=false,0)}
+}
+tabs.addEventListener('pointerup',event=>finish(event));tabs.addEventListener('pointercancel',event=>finish(event,true));
+dialog.addEventListener('cancel',event=>{event.preventDefault();closeProfile();});
+dialog.addEventListener('close',()=>{profileClosing=false;clearProfileMotion();profileSource?.focus({preventScroll:true});});
+document.querySelector('.close').addEventListener('click',closeProfile);
+const bookingContact=document.querySelector('.booking-contact');
+document.querySelector('.book-now').addEventListener('click',()=>bookingContact.showModal());
+bookingContact.querySelector('.close').addEventListener('click',()=>bookingContact.close());
+bookingContact.addEventListener('click',event=>{if(event.target===bookingContact){const r=bookingContact.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)bookingContact.close()}});
+dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeProfile()}});
+select('female',true);
+document.querySelectorAll('[data-roster-nav]').forEach(link=>link.addEventListener('click',event=>{
+ if(window.parent!==window&&window.parent.modelingNavigate){event.preventDefault();window.parent.modelingNavigate(link.dataset.rosterNav);}
+}));
+</script>
+</body></html>

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+    <meta name="description" content="Sophs Model — new faces and model applications.">
+    <title>Sophs Model</title>
+    <link rel="preload" href="fonts/IBMPlexMono-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="styles.css?v=homepage-3">
+  </head>
+  <body>
+    <div class="catalog-screen" data-catalog-screen>
+      <iframe class="roster-frame" src="models-concept.html?embedded=1&v=model-login-5" title="Sophs Model roster" loading="eager"></iframe>
+      <header class="site-header">
+        <a class="site-code" href="./" data-open-catalog aria-label="Models home"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" aria-hidden="true"><path d="m14 5-7 7 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>SM-26</a>
+        <nav class="gender-nav glass-switch catalogue-switch" data-segmented="catalogue" aria-label="Model division">
+          <span class="glass-thumb" aria-hidden="true"></span>
+          <button class="gender-tab is-active" type="button" data-division-option="female" aria-current="page">Female</button>
+          <button class="gender-tab" type="button" data-division-option="male">Male</button>
+          <button class="apply-trigger" type="button" data-open-application>Apply</button>
+        </nav>
+        <div class="glass-switch language-switch header-language" data-segmented="language" role="group" aria-label="Language">
+          <span class="glass-thumb" aria-hidden="true"></span>
+          <button type="button" data-locale="th" lang="th" aria-pressed="false">ไทย</button>
+          <button type="button" data-locale="en" lang="en" aria-pressed="true">English</button>
+        </div>
+      </header>
+
+      <main id="catalog">
+        <h1 class="visually-hidden" tabindex="-1">Female model application</h1>
+        <section class="catalog-hero">
+          <section class="catalog-track" data-division-view="female" aria-label="Photo guide">
+            <figure class="shot">
+              <img src="assets/cu-01-v2.jpg" alt="Close-up example: face forward, natural skin, hair pulled back" width="1122" height="1402">
+              <figcaption><span>Front</span><span>01 / 04</span></figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="assets/pf-01-v2.jpg" alt="Profile example: exact side profile, natural skin, hair pulled back" width="1122" height="1402">
+              <figcaption><span>Profile</span><span>02 / 04</span></figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="assets/fl-01-v2.jpg" alt="Full-length example: fitted black tank, bike shorts and bare feet" width="985" height="1597" loading="lazy">
+              <figcaption><span>Shorts</span><span>03 / 04</span></figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="assets/jn-01-v2.jpg" alt="Full-length alternate: fitted black tank, low-rise straight jeans and bare feet" width="972" height="1619" loading="lazy">
+              <figcaption><span>Jeans</span><span>04 / 04</span></figcaption>
+            </figure>
+          </section>
+          <div class="guide-strip" aria-label="Photo requirement: no makeup">
+            <span aria-hidden="true">Photos · No makeup</span>
+          </div>
+        </section>
+
+        <section class="model-profile" data-division-profile="female" aria-label="Ploy Shoman profile">
+          <div class="profile-inner">
+            <header class="profile-heading">
+              <p>SM-26 / 001</p>
+              <h2>Ploy Shoman</h2>
+            </header>
+
+            <dl class="profile-measurements" aria-label="Measurements">
+              <div><dt>Height</dt><dd>170 CM</dd></div>
+              <div><dt>Bust</dt><dd>82 CM</dd></div>
+              <div><dt>Waist</dt><dd>64 CM</dd></div>
+              <div><dt>Hips</dt><dd>90 CM</dd></div>
+              <div><dt>Shoe</dt><dd>38 EU</dd></div>
+            </dl>
+
+            <div class="profile-social">
+              <p>Social</p>
+              <p>@ploy.shoman</p>
+            </div>
+
+            <section class="profile-experience" aria-labelledby="experience-title">
+              <h3 id="experience-title">Experience</h3>
+              <p>Runway · Photo shoots · Advertising</p>
+              <div class="experience-grid">
+                <figure class="experience-shot">
+                  <img src="assets/fl-01-v2.jpg" alt="Ploy Shoman full-length portfolio example" width="985" height="1597" loading="lazy">
+                  <figcaption>Photo shoots</figcaption>
+                </figure>
+                <figure class="experience-shot">
+                  <img src="assets/jn-01-v2.jpg" alt="Ploy Shoman advertising portfolio example" width="972" height="1619" loading="lazy">
+                  <figcaption>Advertising</figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <button class="profile-apply" type="button" data-open-application>Apply</button>
+          </div>
+        </section>
+
+        <section class="model-profile model-profile-empty" data-division-profile="male" aria-label="Male models" hidden>
+          <div class="profile-inner">
+            <header class="profile-heading">
+              <p>SM-26 / Male</p>
+              <h2>Open call</h2>
+            </header>
+            <p class="empty-profile-copy">Profiles coming soon.</p>
+            <button class="profile-apply" type="button" data-open-application>Apply</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="application" aria-labelledby="application-title">
+      <div class="application-shell">
+        <header class="application-header">
+          <nav class="application-account-nav" aria-label="Account and navigation"><button class="catalog-return" type="button" data-close-application aria-label="Back to catalog"><span>Back</span></button><a href="model-login.html">Login</a></nav>
+          <p id="application-title" tabindex="-1">SM-26 / Application</p>
+          <div class="glass-switch language-switch header-language" data-segmented="language" role="group" aria-label="Language">
+          <span class="glass-thumb" aria-hidden="true"></span>
+          <button type="button" data-locale="th" lang="th" aria-pressed="false">ไทย</button>
+          <button type="button" data-locale="en" lang="en" aria-pressed="true">English</button>
+        </div>
+        </header>
+
+        <form class="application-form" data-require-recovery="true" novalidate>
+          <div class="application-scroll" data-application-content>
+            <section class="application-section measurements" aria-labelledby="measurements-title">
+              <h2 class="visually-hidden" id="measurements-title">Measurements</h2>
+              <div class="measurement-list">
+                <label class="measurement-row">
+                  <span class="measurement-name">Height</span>
+                  <span class="range-control">
+                    <output for="height" data-range-output>170 CM - 5 FT 7 IN</output>
+                    <input id="height" type="range" name="heightCm" min="145" max="200" value="170" step="1" data-unit="CM" required>
+                  </span>
+                </label>
+                <label class="measurement-row">
+                  <span class="measurement-name">Bust</span>
+                  <span class="range-control">
+                    <output for="bust" data-range-output>82 CM</output>
+                    <input id="bust" type="range" name="bustCm" min="60" max="120" value="82" step="1" data-unit="CM" required>
+                  </span>
+                </label>
+                <label class="measurement-row">
+                  <span class="measurement-name">Waist</span>
+                  <span class="range-control">
+                    <output for="waist" data-range-output>64 CM</output>
+                    <input id="waist" type="range" name="waistCm" min="45" max="110" value="64" step="1" data-unit="CM" required>
+                  </span>
+                </label>
+                <label class="measurement-row">
+                  <span class="measurement-name">Hips</span>
+                  <span class="range-control">
+                    <output for="hips" data-range-output>90 CM</output>
+                    <input id="hips" type="range" name="hipsCm" min="65" max="130" value="90" step="1" data-unit="CM" required>
+                  </span>
+                </label>
+                <label class="measurement-row">
+                  <span class="measurement-name">Shoe</span>
+                  <span class="range-control">
+                    <output for="shoe" data-range-output>38 EU</output>
+                    <input id="shoe" type="range" name="shoeEu" min="34" max="46" value="38" step="0.5" data-unit="EU" required>
+                  </span>
+                </label>
+              </div>
+            </section>
+
+            <section class="application-section details" aria-labelledby="details-title">
+              <h2 class="visually-hidden" id="details-title">Details</h2>
+              <div class="field-list">
+                <label><span>Name</span><span class="entry-surface"><input name="fullName" autocomplete="name" required></span></label>
+                <label class="date-field"><span>Date of birth</span><span class="entry-surface"><input name="dateOfBirth" type="date" autocomplete="bday" aria-label="Choose date of birth" required></span></label>
+                <label><span>City</span><span class="entry-surface"><input name="city" autocomplete="address-level2" required></span></label>
+                <label class="channel-field">
+                  <span>Contact</span>
+                  <span class="compound-field entry-surface">
+                    <select name="contactType" aria-label="Contact type">
+                      <option value="Line">Line</option>
+                      <option value="WhatsApp">WhatsApp</option>
+                      <option value="Phone">Phone</option>
+                    </select>
+                    <input name="contact" autocomplete="tel" aria-label="Contact" required>
+                  </span>
+                </label>
+                <label><span>Email</span><span class="entry-surface"><input name="email" type="email" autocomplete="email" inputmode="email" required></span></label>
+                <label class="channel-field">
+                  <span>Social</span>
+                  <span class="compound-field entry-surface">
+                    <select name="socialType" aria-label="Social platform">
+                      <option value="Instagram">Instagram</option>
+                      <option value="TikTok">TikTok</option>
+                      <option value="Facebook">Facebook</option>
+                    </select>
+                    <input name="social" aria-label="Social">
+                  </span>
+                </label>
+                <fieldset class="experience-field">
+                  <legend>Experience</legend>
+                  <details class="experience-select entry-surface" data-experience-select>
+                    <summary data-experience-summary>Select experience</summary>
+                    <div class="experience-panel">
+                      <div class="experience-options" data-experience-options>
+                        <label><input type="checkbox" name="experienceCategories" value="Advertising"><span>Advertising</span></label>
+                        <label><input type="checkbox" name="experienceCategories" value="Runway"><span>Runway</span></label>
+                        <label><input type="checkbox" name="experienceCategories" value="Photo shoots"><span>Photo shoots</span></label>
+                        <label><input type="checkbox" name="experienceCategories" value="Social media"><span>Social media</span></label>
+                      </div>
+                      <label class="experience-option experience-other-option">
+                        <input type="checkbox" data-experience-other-toggle>
+                        <span>Other</span>
+                      </label>
+                      <div class="experience-other-entry" data-experience-other-entry hidden>
+                        <div class="experience-other-input-row">
+                          <input type="text" data-experience-other-input maxlength="80" autocomplete="off" placeholder="Add your experience" aria-label="Other experience">
+                          <button type="button" data-add-experience-other>Add</button>
+                        </div>
+                        <div class="experience-other-list" data-experience-other-list aria-live="polite"></div>
+                      </div>
+                    </div>
+                  </details>
+                </fieldset>
+              </div>
+            </section>
+
+            <section class="application-section iphone-photos" aria-labelledby="photos-title">
+              <h2 class="visually-hidden" id="photos-title">Model photos</h2>
+              <div class="photo-guide-link"><a href="photo-guide.html" target="_blank" rel="noopener noreferrer"><span>Photo guide</span> <span aria-hidden="true">↗</span></a></div>
+              <p class="photo-rule" id="photo-rule">Upload at least one photo. Follow the examples below.</p>
+              <div class="upload-grid">
+                <label class="upload-card">
+                  <span class="upload-object">
+                    <img src="assets/cu-01-v2.jpg" data-upload-preview data-reference-src="assets/cu-01-v2.jpg" alt="Front-facing close-up example, head and shoulders">
+                    <span data-upload-placeholder hidden>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>CU-01</b><span>Front · Close-up</span><em data-file-name></em></span>
+                  <input name="face" type="file" accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+                <label class="upload-card">
+                  <span class="upload-object">
+                    <img src="assets/waist-up-v2.jpg" data-upload-preview data-reference-src="assets/waist-up-v2.jpg" alt="Front-facing mid-length example, head to mid-thigh">
+                    <span data-upload-placeholder hidden>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>ML-01</b><span>Front · Mid-length</span><em data-file-name></em></span>
+                  <input name="midLength" type="file" accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+                <label class="upload-card">
+                  <span class="upload-object">
+                    <img src="assets/pf-01-v2.jpg" data-upload-preview data-reference-src="assets/pf-01-v2.jpg" alt="Reference framing for a side-profile photo">
+                    <span data-upload-placeholder hidden>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>PF-01</b><span>Side profile</span><em data-file-name></em></span>
+                  <input name="profile" type="file" accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+                <label class="upload-card">
+                  <span class="upload-object">
+                    <img src="assets/fl-01-v2.jpg" data-upload-preview data-reference-src="assets/fl-01-v2.jpg" alt="Reference framing for a full-length photo">
+                    <span data-upload-placeholder hidden>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>FL-01</b><span>Front · Full-length</span><em data-file-name></em></span>
+                  <input name="fullLength" type="file" accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+                <label class="upload-card">
+                  <span class="upload-object">
+                    <img src="assets/jn-01-v2.jpg" data-upload-preview data-reference-src="assets/jn-01-v2.jpg" alt="Reference framing for a full-length photo">
+                    <span data-upload-placeholder hidden>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>JN-01</b><span>Full-length · Jeans</span><em data-file-name></em></span>
+                  <input name="jeans" type="file" accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+                <div class="upload-card walking-card">
+                  <button type="button" class="upload-object walking-trigger" data-walking-open aria-haspopup="dialog">
+                    <span class="walking-bubble">Add video link</span>
+                  </button>
+                  <span class="upload-caption"><b>WK-01</b><span>Walking video</span><em data-walking-state>Optional · Link only</em></span>
+                  <dialog class="walking-dialog" data-walking-dialog aria-labelledby="walking-title">
+                    <button type="button" class="walking-close" data-walking-close aria-label="Close walking video">×</button>
+                    <h2 id="walking-title">Walking video</h2>
+                    <p>Paste a link to a video of you walking from Instagram, Facebook, TikTok or Google Drive. Make sure we can open it.</p>
+                    <label for="walking-url">Video link</label>
+                    <input id="walking-url" name="walkingVideoUrl" type="url" maxlength="1500" placeholder="https://…" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false">
+                    <p class="walking-error" data-walking-error role="alert"></p>
+                    <div class="walking-actions"><button type="button" data-walking-save>Done</button></div>
+                  </dialog>
+                </div>
+                <label class="upload-card">
+                  <span class="upload-object">
+                    <img data-upload-preview alt="" hidden>
+                    <span data-upload-placeholder>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>OT-02</b><span>Other</span><em data-file-name>Optional · Up to 4 photos</em></span>
+                  <input name="otherTwo" type="file" multiple accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+                <label class="upload-card portfolio-card">
+                  <span class="upload-object">
+                    <img data-upload-preview alt="" hidden>
+                    <span data-upload-placeholder>+</span>
+                    <span class="upload-prompt" aria-hidden="true">Upload</span>
+                  </span>
+                  <span class="upload-caption"><b>OT-01</b><span>Portfolio</span><em data-file-name>Optional · Up to 4 photos</em></span>
+                  <input name="otherOne" type="file" multiple accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" aria-describedby="photo-rule">
+                </label>
+              </div>
+
+              <div class="consent-list">
+                <label class="consent-row">
+                  <input name="consent" type="checkbox" required checked>
+                  <span>I confirm my details and photos are accurate, I am over 18, and they may be used to assess my application, match me with relevant castings, and contact me about my application.</span>
+                </label>
+                <label class="consent-row consent-row-optional">
+                  <input name="opportunityEmails" type="checkbox" checked>
+                  <span>Email me about future casting opportunities that may suit my profile. I can unsubscribe at any time.</span>
+                </label>
+              </div>
+
+              <button class="submit-button" type="button" data-submit disabled>Submit application</button>
+              <p class="form-status" role="status" tabindex="-1" aria-live="polite" aria-atomic="true"></p>
+            </section>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <script src="supabase-config.js?v=1"></script>
+    <script src="backend.js?v=recovery-1"></script>
+    <script src="submission-recovery.js?v=1"></script>
+    <script src="locale.js?v=mobile-1"></script>
+    <script src="landing-controls.js?v=recovery-3"></script>
+    <script src="channel-fields.js?v=recovery-1"></script>
+    <script src="glass-effects.js?v=1"></script>
+    <script src="photo-conversion.js?v=mobile-1"></script>
+    <script src="photo-management.js?v=1"></script>
+    <script src="application.js?v=homepage-3"></script>
+  </body>
+</html>

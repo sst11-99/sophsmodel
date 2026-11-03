@@ -1,0 +1,13 @@
+.DS_Store
+*.log
+.vercel/
+supabase/.temp/
+assets/*.png
+.env
+.env.*
+*.pem
+*.key
+
+# Local portal preview only.
+model-portal-preview-local.*
+assets/sophs-portal-logo.png

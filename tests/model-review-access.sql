@@ -1,0 +1,34 @@
+-- Real role/RLS exercise; every fixture is rolled back. No emails or permanent users.
+begin;
+insert into auth.users(id,email,email_confirmed_at) values('c3413148-893f-47b5-a82f-9a25e4065581','review-model@example.invalid',now()),('c3413148-893f-47b5-a82f-9a25e4065582','review-agency@example.invalid',now());
+insert into public.review_collections(id,name) values('c3413148-893f-47b5-a82f-9a25e4065583','Access test'),('c3413148-893f-47b5-a82f-9a25e4065584','Other collection');
+insert into public.review_members values('c3413148-893f-47b5-a82f-9a25e4065583','review-model@example.invalid','model'),('c3413148-893f-47b5-a82f-9a25e4065583','review-agency@example.invalid','agency');
+insert into public.review_photos(id,collection_id,storage_path,original_name) values('c3413148-893f-47b5-a82f-9a25e4065585','c3413148-893f-47b5-a82f-9a25e4065583','c3413148-893f-47b5-a82f-9a25e4065583/test.jpg','Test photo');
+insert into public.review_choices(collection_id,photo_id,side,selection) values('c3413148-893f-47b5-a82f-9a25e4065583','c3413148-893f-47b5-a82f-9a25e4065585','agency','{"decision":"keep","types":[],"uses":[]}');
+set local role anon;
+do $$begin begin perform * from public.review_choices;raise exception 'Anonymous read unexpectedly succeeded';exception when insufficient_privilege then null;end;end$$;
+reset role;
+select set_config('request.jwt.claims','{"role":"authenticated","sub":"c3413148-893f-47b5-a82f-9a25e4065581","email":"review-model@example.invalid"}',true);
+set local role authenticated;
+do $$declare n integer;begin
+ select count(*) into n from public.review_collections;if n<>1 then raise exception 'Collection isolation failed';end if;
+ update public.review_choices set selection='{"decision":"reject","types":[],"uses":[]}',actor_user_id=auth.uid() where side='agency';get diagnostics n=row_count;if n<>0 then raise exception 'Model overwrote agency';end if;
+ begin insert into public.review_choices(collection_id,photo_id,side,actor_user_id,selection) values('c3413148-893f-47b5-a82f-9a25e4065583','c3413148-893f-47b5-a82f-9a25e4065585','model','c3413148-893f-47b5-a82f-9a25e4065582','{"decision":"favourite","types":[],"uses":[]}');raise exception 'Actor spoof succeeded';exception when insufficient_privilege then null;end;
+ insert into public.review_choices(collection_id,photo_id,side,actor_user_id,selection) values('c3413148-893f-47b5-a82f-9a25e4065583','c3413148-893f-47b5-a82f-9a25e4065585','model',auth.uid(),'{"decision":"favourite","types":[],"uses":[]}');
+ update public.review_choices set selection='{"decision":"reject","types":[],"uses":[]}',actor_user_id=auth.uid() where side='model';
+ if not exists(select 1 from public.review_choices where side='model' and revision=2 and selection->>'decision'='reject') then raise exception 'Own-side save/revision failed';end if;
+ if not exists(select 1 from public.review_choices where side='agency' and selection->>'decision'='keep') then raise exception 'Agency suggestion changed';end if;
+ select count(*) into n from public.review_changes;if n<>3 then raise exception 'Audit history missing';end if;
+ begin insert into public.review_members values('c3413148-893f-47b5-a82f-9a25e4065584','review-model@example.invalid','agency');raise exception 'Self-grant succeeded';exception when insufficient_privilege then null;end;
+end$$;
+reset role;
+select set_config('request.jwt.claims','{"role":"authenticated","sub":"c3413148-893f-47b5-a82f-9a25e4065582","email":"review-agency@example.invalid"}',true);
+set local role authenticated;
+do $$declare n integer;begin update public.review_choices set selection='{"decision":"keep","types":[],"uses":[]}',actor_user_id=auth.uid() where side='model';get diagnostics n=row_count;if n<>0 then raise exception 'Agency overwrote model';end if;end$$;
+reset role;
+select set_config('request.jwt.claims','{"role":"authenticated","sub":"c3413148-893f-47b5-a82f-9a25e4065581","email":"unassigned@example.invalid"}',true);
+set local role authenticated;
+do $$declare n integer;begin select count(*) into n from public.review_photos;if n<>0 then raise exception 'Unassigned read succeeded';end if;end$$;
+reset role;
+rollback;
+select count(*)=0 as fixtures_removed from auth.users where email like 'review-%@example.invalid';

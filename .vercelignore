@@ -1,0 +1,28 @@
+tests/
+README.md
+VIRGIN-1.md
+BACKEND-CONTRACT.md
+supabase/
+scripts/
+.DS_Store
+assets/*.png
+assets/close-up.jpg
+assets/full-length.jpg
+assets/profile.jpg
+*.md
+.git/
+.vercel/
+.env
+.env.*
+*.pem
+*.key
+*-local.html
+
+# Source photographs and local asset notes are never deployed.
+assets/wall-cards/*
+!assets/wall-cards/*-card-web.jpg
+models-mobile.html
+
+# Local portal preview only.
+model-portal-preview-local.*
+assets/sophs-portal-logo.png
