@@ -157,9 +157,24 @@ header{position:relative;z-index:1}
 @media(hover:none){.model:hover .wall-sheet,.model:hover .roster-portrait{translate:none}.model:hover .card-sheen{opacity:.85}}
 @media(pointer:coarse){.tabs button,.roster-links a,.book-now,.close{min-height:48px}.close{min-width:48px}}
 @media(max-height:420px){.model-dialog.gallery-view{grid-template-rows:auto minmax(90px,1fr) auto auto;gap:6px}.model-dialog .booking-action{min-height:48px;padding:0}}
-.model-dialog.gallery-view .photos.live-final-gallery{overflow-y:auto;grid-template-rows:none;grid-auto-rows:clamp(230px,38vh,380px);align-content:start;overscroll-behavior:contain}
-.model-dialog.gallery-view .photos.live-final-gallery figure{grid-template-rows:minmax(0,1fr) auto;gap:6px}
-.live-final-gallery figure>a:first-child{min-height:0;display:block}.live-final-gallery figure>a:last-child{font:12px sans-serif;color:#666;text-align:center;padding:5px}.gallery-message{grid-column:1/-1}
+.model-dialog.gallery-view .photos.live-final-gallery{overflow-y:auto;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:clamp(290px,36vw,440px);gap:28px 22px;align-content:start;align-items:stretch;overscroll-behavior:contain;padding:28px 18px;background:#fff}
+.model-dialog.gallery-view .photos.live-final-gallery figure{position:relative;display:block;box-sizing:border-box;height:100%;min-height:0;min-width:0;aspect-ratio:auto;margin:0;padding:8px;background:#fff;border:1px solid #dedfd9;border-radius:1px;box-shadow:2px 5px 7px #00000016}
+.model-dialog.gallery-view .photos.live-final-gallery figure::before{content:"";position:absolute;z-index:1;top:-17px;left:47%;width:19px;height:44px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2264%22%20viewBox%3D%220%200%2028%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22metal%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%220%22%3E%3Cstop%20stop-color%3D%22%23777b7d%22%2F%3E%3Cstop%20offset%3D%22.24%22%20stop-color%3D%22%23e9edef%22%2F%3E%3Cstop%20offset%3D%22.48%22%20stop-color%3D%22%23979c9e%22%2F%3E%3Cstop%20offset%3D%22.72%22%20stop-color%3D%22%23f8fafb%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2373787a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M%2019%2021%20V%2047%20C%2019%2056%207%2056%207%2047%20V%2013%20C%207%202%2023%202%2023%2013%20V%2048%20C%2023%2063%203%2063%203%2048%20V%2020%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%20transform%3D%22translate%281.2%201.5%29%22%2F%3E%3Cpath%20d%3D%22M%2019%2021%20V%2047%20C%2019%2056%207%2056%207%2047%20V%2013%20C%207%202%2023%202%2023%2013%20V%2048%20C%2023%2063%203%2063%203%2048%20V%2020%22%20fill%3D%22none%22%20stroke%3D%22url%28%23metal%29%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;transform:rotate(12deg);pointer-events:none}
+.model-dialog.gallery-view .photos.live-final-gallery figure:nth-child(3n+2)::before{transform:rotate(-8deg);left:49%}
+.model-dialog.gallery-view .photos.live-final-gallery figure:nth-child(3n)::before{transform:rotate(7deg);left:45%}
+.live-final-gallery figure>a:first-child{width:100%;height:100%;min-height:0;display:block;background:#fff}
+.model-dialog.gallery-view .photos.live-final-gallery img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;border-radius:0}
+.live-final-gallery figure>a:focus-visible{outline:2px solid #555;outline-offset:2px}
+.gallery-message{grid-column:1/-1}
+@media(max-width:700px){.model-dialog.gallery-view .photos.live-final-gallery{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(220px,55vw,340px);gap:24px 12px;padding:24px 10px}.model-dialog.gallery-view .photos.live-final-gallery figure{padding:6px}}
+/* Centre the three-item second row on phone and tablet layouts. */
+@media(max-width:900px){
+ .model-dialog.gallery-view .profile-dimensions:not([hidden]){grid-template-columns:repeat(8,minmax(0,1fr));gap:12px 8px}
+ .model-dialog.gallery-view .profile-dimensions>div{grid-column:span 2}
+ .model-dialog.gallery-view .profile-dimensions>div:nth-child(5){grid-column:2 / span 2}
+ .model-dialog.gallery-view .profile-dimensions>div:nth-child(6){grid-column:4 / span 2}
+ .model-dialog.gallery-view .profile-dimensions>div:nth-child(7){grid-column:6 / span 2}
+}
 </style>
 <script defer src="website-gallery.js"></script>
 </head>
@@ -305,23 +320,23 @@ function appendPaperTape(svg,{paper:[x,y,w,h],seed:assetKey,id},make){
  const outline='M '+points.map(p=>p.join(' ')).join(' L ')+' Z';
  const clip=make('clipPath',{id:id+'-tape-clip',clipPathUnits:'userSpaceOnUse'});clip.append(make('path',{d:outline}));defs.append(clip);
  const pigment=make('linearGradient',{id:id+'-tape',gradientUnits:'userSpaceOnUse',x1:tx+tw,y1:ty,x2:tx,y2:ty+th});
- pigment.append(make('stop',{offset:'0%','stop-color':'#ccbb8c','stop-opacity':'.48'}),make('stop',{offset:'100%','stop-color':'#b8a573','stop-opacity':'.55'}));defs.append(pigment);
- tape.append(make('path',{d:outline,transform:`translate(${-w*.0007} ${w*.0015})`,fill:'#4c412c','fill-opacity':'.085'}));
- tape.append(make('path',{class:'tape-wall',d:outline,fill:'url(#'+id+'-tape)',stroke:'#a99b79','stroke-opacity':'.14','stroke-width':w*.0005}));
+ pigment.append(make('stop',{offset:'0%','stop-color':'#909090','stop-opacity':'.48'}),make('stop',{offset:'100%','stop-color':'#777777','stop-opacity':'.55'}));defs.append(pigment);
+ tape.append(make('path',{d:outline,transform:`translate(${-w*.0007} ${w*.0015})`,fill:'#333333','fill-opacity':'.085'}));
+ tape.append(make('path',{class:'tape-wall',d:outline,fill:'url(#'+id+'-tape)',stroke:'#626262','stroke-opacity':'.14','stroke-width':w*.0005}));
  const surface=make('g',{'clip-path':'url(#'+id+'-tape-clip)'});
  // Added pigment only where the tape contacts paper; the wall portion stays translucent.
- surface.append(make('rect',{class:'tape-paper',x,y,width:w,height:h,fill:'#a79669','fill-opacity':.15+random()*.025}));
+ surface.append(make('rect',{class:'tape-paper',x,y,width:w,height:h,fill:'#777777','fill-opacity':.15+random()*.025}));
  const grain=make('g',{transform:`rotate(${angle} ${cx} ${cy})`});
  for(let i=0;i<42;i++){
   const gx=tx+random()*tw,gy=ty+random()*th;
-  grain.append(make('path',{d:`M ${gx} ${gy} l ${tw*(.015+random()*.065)} ${th*(random()-.5)*.025}`,stroke:i%3?'#fff9e5':'#8d7a51','stroke-opacity':i%3?'.13':'.065','stroke-width':w*.0009}));
+  grain.append(make('path',{d:`M ${gx} ${gy} l ${tw*(.015+random()*.065)} ${th*(random()-.5)*.025}`,stroke:i%3?'#f4f4f4':'#505050','stroke-opacity':i%3?'.13':'.065','stroke-width':w*.0009}));
  }
  surface.append(grain);
  // A tiny light-facing shoulder and underside ridge bridge the paper's thickness.
  // These do not rotate with the strip: both are clipped to its actual torn outline.
  const edgeBend=w*(.0005+random()*.0004),ridge=`M ${tx-tw*.1} ${y} Q ${cx} ${y+edgeBend} ${tx+tw*1.1} ${y}`;
- surface.append(make('path',{class:'tape-edge-shadow',d:ridge,transform:`translate(0 ${w*.001})`,fill:'none',stroke:'#78694b','stroke-opacity':'.14','stroke-width':w*.0013}));
- surface.append(make('path',{class:'tape-edge-light',d:ridge,transform:`translate(0 ${-w*.0006})`,fill:'none',stroke:'#fffbed','stroke-opacity':'.20','stroke-width':w*.001}));
+ surface.append(make('path',{class:'tape-edge-shadow',d:ridge,transform:`translate(0 ${w*.001})`,fill:'none',stroke:'#454545','stroke-opacity':'.14','stroke-width':w*.0013}));
+ surface.append(make('path',{class:'tape-edge-light',d:ridge,transform:`translate(0 ${-w*.0006})`,fill:'none',stroke:'#fafafa','stroke-opacity':'.20','stroke-width':w*.001}));
  tape.append(surface);svg.append(defs,tape);
  return tape;
 }
@@ -390,7 +405,7 @@ function render(division){
   else{card.classList.add('unpictured');const pending=document.createElement('span');pending.className='coming-soon';pending.textContent='Coming soon';figure.append(pending);}
   card.append(figure,label);if(name)card.addEventListener('click',()=>openProfile(name,index,division,card));return card;
  }));
- if(division==='male'){const pending=document.createElement('p');pending.className='applicants-pending';pending.textContent='Applicants Pending';roster.append(pending);}
+ if(division==='male'){const pending=document.createElement('p');pending.className='applicants-pending';pending.textContent='Coming Soon';roster.append(pending);}
  roster.classList.remove('entering');requestAnimationFrame(()=>roster.classList.add('entering'));
 }
 function select(division,immediate=false){

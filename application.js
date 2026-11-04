@@ -9,18 +9,18 @@ function measurementLabel(value, unit, division = "female", measurement = "") {
   const number = Number(value);
   if (unit === "CM" && measurement === "heightCm") {
     const inches = Math.round(number / 2.54);
-    return `${value} CM - ${Math.floor(inches / 12)} FT ${inches % 12} IN`;
+    return `${value} ${translate("CM")} - ${Math.floor(inches / 12)} ${translate("FT")} ${inches % 12} ${translate("IN")}`;
   }
-  if (unit === "CM") return `${value} CM - ${(number / 2.54).toFixed(1)} IN`;
+  if (unit === "CM") return `${value} ${translate("CM")} - ${(number / 2.54).toFixed(1)} ${translate("IN")}`;
   if (unit === "EU" && number >= 34 && number <= 46) {
     const upper = SHOE_GUIDE.findIndex(([eu]) => eu >= number);
     const [lowEU, lowUS] = SHOE_GUIDE[upper - 1];
     const [highEU, highUS] = SHOE_GUIDE[upper];
     const womenUS = lowUS + ((number - lowEU) / (highEU - lowEU)) * (highUS - lowUS);
     const us = Math.round((womenUS - (division === "male" ? 1.5 : 0)) * 2) / 2;
-    return `${value} EU - ≈${us} ${translate(division === "male" ? "US men" : "US women")}`;
+    return `${value} ${translate("EU")} - ≈${us} ${translate(division === "male" ? "US men" : "US women")}`;
   }
-  return `${value} ${unit}`;
+  return `${value} ${translate(unit)}`;
 }
 
 function channelValue(channel, value) {

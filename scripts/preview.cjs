@@ -3,6 +3,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const locale = require('../api/locale');
 const root = path.resolve(__dirname, '..');
+const galleryEndpoint = 'https://zyzwvrogeudwvackduau.supabase.co/functions/v1/website-gallery/sophie';
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf' };
 http.createServer(async (req, res) => {
   if (req.url.split('?')[0] === '/api/locale') {
@@ -12,7 +13,25 @@ http.createServer(async (req, res) => {
     return locale(req, res);
   }
   try {
-    const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+    let pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+    if (pathname === '/api/website-gallery') pathname = '/api/preview-gallery';
+    // Read-only local bridge to the existing public gallery; never forwards credentials.
+    if (/^\/api\/preview-gallery(?:\/[-0-9a-f]{36}\/(?:display|large|zoom|download))?$/.test(pathname)) {
+      if (req.method !== 'GET') { res.writeHead(405); return res.end('Method not allowed'); }
+      try {
+        const upstream = await fetch(galleryEndpoint + pathname.slice('/api/preview-gallery'.length), { signal: AbortSignal.timeout(15000) });
+        res.statusCode = upstream.status;
+        res.setHeader('Content-Type', upstream.headers.get('content-type') || 'application/octet-stream');
+        res.setHeader('Cache-Control', 'no-store');
+        return res.end(Buffer.from(await upstream.arrayBuffer()));
+      } catch { res.writeHead(502); return res.end('Gallery unavailable'); }
+    }
+    if (pathname === '/website-gallery.js') {
+      const source = await fs.readFile(path.join(root, 'website-gallery.js'), 'utf8');
+      res.setHeader('Content-Type', 'text/javascript');
+      res.setHeader('Cache-Control', 'no-store');
+      return res.end(source.replace(galleryEndpoint, '/api/preview-gallery'));
+    }
     if (pathname === '/submission-demo') {
       const html = await fs.readFile(path.join(root, 'index.html'), 'utf8');
       res.setHeader('Content-Type', 'text/html');
